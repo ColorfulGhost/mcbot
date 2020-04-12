@@ -1,0 +1,30 @@
+[20-04-12 20:37:34] [PicqBotX] [INFO] 
+[20-04-12 20:37:34] [PicqBotX] [INFO]     ____  _            ____        __ _  __
+[20-04-12 20:37:34] [PicqBotX] [INFO]    / __ \(_)________ _/ __ )____  / /| |/ /
+[20-04-12 20:37:34] [PicqBotX] [INFO]   / /_/ / / ___/ __ `/ __  / __ \/ __/   /
+[20-04-12 20:37:34] [PicqBotX] [INFO]  / ____/ / /__/ /_/ / /_/ / /_/ / /_/   |
+[20-04-12 20:37:34] [PicqBotX] [INFO] /_/   /_/\___/\__, /_____/\____/\__/_/|_|
+[20-04-12 20:37:34] [PicqBotX] [INFO]                 /_/         v4.12.0.1019.PRE
+[20-04-12 20:37:34] [PicqBotX] [INFO] 日志管理器     初始化完成 [******] ...(8.23 ms)
+[20-04-12 20:37:34] [PicqBotX] [INFO] 缓存管理器     初始化完成 [******] ...(0.78 ms)
+[20-04-12 20:37:34] [PicqBotX] [INFO] DEBUG设置     初始化完成 [******] ...(0.01 ms)
+[20-04-12 20:37:34] [PicqBotX] [INFO] 事件管理器     初始化完成 [******] ...(7.55 ms)
+[20-04-12 20:37:34] [PicqBotX] [INFO] 账号管理器     初始化完成 [******] ...(0.55 ms)
+[20-04-12 20:37:34] [PicqBotX] [INFO] HTTP监听服务器 初始化完成 [******] ...(0.4 ms)
+[20-04-12 20:37:34] [PicqBotX] [INFO] 指令管理器     初始化完成 [******] ...(0.68 ms)
+[20-04-12 20:37:34] [PicqBotX] [WARNING] 已跳过版本验证w
+[20-04-12 20:37:34] [PicqBotX] [INFO] 正在启动...
+[20-04-12 20:37:50] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] 收到新请求: CQHttp/4.14.1
+[20-04-12 20:37:50] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] - 数据: {"anonymous":null,"font":43716328,"group_id":687031811,"message":"/help","message_id":473,"message_type":"group","post_type":"message","raw_message":"/help","self_id":1277841527,"sender":{"age":0,"area":"","card":"","level":"冒泡","nickname":"Ghost","role":"owner","sex":"unknown","title":"","user_id":815666528},"sub_type":"normal","time":1586695070,"user_id":815666528}
+[20-04-12 20:38:58] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] 收到新请求: CQHttp/4.14.1
+[20-04-12 20:38:58] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] - 数据: {"anonymous":null,"font":43716520,"group_id":687031811,"message":".","message_id":475,"message_type":"group","post_type":"message","raw_message":".","self_id":1277841527,"sender":{"age":0,"area":"","card":"","level":"冒泡","nickname":"Ghost","role":"owner","sex":"unknown","title":"","user_id":815666528},"sub_type":"normal","time":1586695138,"user_id":815666528}
+[20-04-12 20:39:02] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] 收到新请求: CQHttp/4.14.1
+[20-04-12 20:39:02] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] - 数据: {"anonymous":null,"font":43716520,"group_id":687031811,"message":"[CQ:at,qq=1277841527]","message_id":476,"message_type":"group","post_type":"message","raw_message":"[CQ:at,qq=1277841527]","self_id":1277841527,"sender":{"age":0,"area":"","card":"","level":"冒泡","nickname":"Ghost","role":"owner","sex":"unknown","title":"","user_id":815666528},"sub_type":"normal","time":1586695142,"user_id":815666528}
+[20-04-12 20:39:06] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] 收到新请求: CQHttp/4.14.1
+[20-04-12 20:39:06] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] - 数据: {"anonymous":null,"font":43716424,"group_id":687031811,"message":"/help","message_id":477,"message_type":"group","post_type":"message","raw_message":"/help","self_id":1277841527,"sender":{"age":0,"area":"","card":"","level":"冒泡","nickname":"Ghost","role":"owner","sex":"unknown","title":"","user_id":815666528},"sub_type":"normal","time":1586695146,"user_id":815666528}
+[20-04-12 20:39:19] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] 收到新请求: CQHttp/4.14.1
+[20-04-12 20:39:19] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] - 数据: {"anonymous":null,"font":43716264,"group_id":687031811,"message":"/help","message_id":479,"message_type":"group","post_type":"message","raw_message":"/help","self_id":1277841527,"sender":{"age":0,"area":"","card":"","level":"冒泡","nickname":"Ghost","role":"owner","sex":"unknown","title":"","user_id":815666528},"sub_type":"normal","time":1586695159,"user_id":815666528}
+[20-04-12 20:39:29] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] 收到新请求: CQHttp/4.14.1
+[20-04-12 20:39:29] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] - 数据: {"anonymous":null,"font":43716264,"group_id":320510534,"message":"/help","message_id":481,"message_type":"group","post_type":"message","raw_message":"/help","self_id":1277841527,"sender":{"age":0,"area":"","card":"","level":"传说","nickname":"Ghost","role":"owner","sex":"unknown","title":"炼铜术士","user_id":815666528},"sub_type":"normal","time":1586695169,"user_id":815666528}
+[20-04-12 20:39:29] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] 收到新请求: CQHttp/4.14.1
+[20-04-12 20:39:29] [PicqBotX] [DEBUG(java.lang.Thread.run:834)] - 数据: {"anonymous":null,"font":43717896,"group_id":320510534,"message":"[CQ:at,qq=815666528] 帮助信息：http://tataru.aoba.vip/help.php","message_id":483,"message_type":"group","post_type":"message","raw_message":"[CQ:at,qq=815666528] 帮助信息：http://tataru.aoba.vip/help.php","self_id":1277841527,"sender":{"age":16,"area":"","card":"","level":"吐槽","nickname":"塔塔露·塔露","role":"admin","sex":"female","title":"","user_id":1243348804},"sub_type":"normal","time":1586695169,"user_id":1243348804}
