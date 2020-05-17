@@ -2,10 +2,12 @@ package cc.vimc.mcbot.bot;
 
 import cc.moecraft.icq.PicqBotX;
 import cc.moecraft.icq.PicqConfig;
-import cc.vimc.mcbot.bot.plugins.CommandHelp;
+import cc.vimc.mcbot.bot.plugins.BindMCAuth;
+import cc.vimc.mcbot.bot.plugins.Help;
+import cc.vimc.mcbot.bot.plugins.ListPlayer;
+import cc.vimc.mcbot.bot.plugins.SendRconMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -33,7 +35,12 @@ public class Bot {
         bot.addAccount(botName, postURL, cqPort);
         bot.enableCommandManager("/");
         bot.getEventManager().registerListeners(new MessageListener());
-        bot.getCommandManager().registerCommands(new CommandHelp());
+        bot.getCommandManager().registerCommands(
+                new Help(),
+                new ListPlayer(),
+                new BindMCAuth(),
+                new SendRconMessage()
+        );
         bot.startBot();
     }
 
