@@ -8,15 +8,11 @@ import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.rcon.RconCommand;
 import cc.vimc.mcbot.utils.MessageUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
 public class SendRconMessage implements EverywhereCommand {
 
     private List<Long> admins = Arrays.asList(815666528L);

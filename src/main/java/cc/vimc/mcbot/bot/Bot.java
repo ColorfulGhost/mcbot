@@ -2,10 +2,7 @@ package cc.vimc.mcbot.bot;
 
 import cc.moecraft.icq.PicqBotX;
 import cc.moecraft.icq.PicqConfig;
-import cc.vimc.mcbot.bot.plugins.BindMCAuth;
-import cc.vimc.mcbot.bot.plugins.Help;
-import cc.vimc.mcbot.bot.plugins.ListPlayer;
-import cc.vimc.mcbot.bot.plugins.SendRconMessage;
+import cc.vimc.mcbot.bot.plugins.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,6 +20,8 @@ public class Bot {
     @Value("${coolq.post.url}")
     private String postURL;
 
+    public static PicqBotX bot;
+
     @PostConstruct
     public void initBot() {
         PicqConfig config = new PicqConfig(postPort);
@@ -30,16 +29,20 @@ public class Bot {
         config.setNoVerify(true);
         config.setDebug(true);
 
-        PicqBotX bot = new PicqBotX(config);
 
-        bot.addAccount(botName, postURL, cqPort);
-        bot.enableCommandManager("/");
-        bot.getEventManager().registerListeners(new MessageListener());
-        bot.getCommandManager().registerCommands(
+        this.bot = new PicqBotX(config);
+
+        this.bot.addAccount(botName, postURL, cqPort);
+        this.bot.enableCommandManager("/");
+        this.bot.getEventManager().registerListeners(new MessageListener());
+        this.bot.getCommandManager().registerCommands(
                 new Help(),
                 new ListPlayer(),
                 new BindMCAuth(),
-                new SendRconMessage()
+                new EditPassword(),
+                new PlayerStatistic(),
+                new SendRconMessage(),
+                new Word()
         );
         bot.startBot();
     }
