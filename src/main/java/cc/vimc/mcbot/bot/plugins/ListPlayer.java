@@ -22,7 +22,7 @@ public class ListPlayer implements EverywhereCommand {
         CoolQUserMapper coolQUserMapper = SpringContextUtil.getBean(CoolQUserMapper.class);
         CoolQUser coolQUser = coolQUserMapper.selectQQExist(sender.getId());
         if (coolQUser==null){
-            messageBuilder.add(ConstantMessages.PLAYER_NOT_EXIST);
+            messageBuilder.add(ConstantMessages.PLAYER_NOT_EXIST.getMessage());
             return messageBuilder.toString();
         }
         messageBuilder.add(RconCommand.send(Commands.LIST.getCommand()));

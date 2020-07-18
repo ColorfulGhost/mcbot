@@ -62,7 +62,7 @@ public class Word implements EverywhereCommand {
 
     @Override
     public CommandProperties properties() {
-        return new CommandProperties(Commands.WORD.getCommand());
+        return new CommandProperties("");
     }
 
 }

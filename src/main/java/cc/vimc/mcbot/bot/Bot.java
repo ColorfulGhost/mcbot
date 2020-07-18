@@ -40,9 +40,10 @@ public class Bot {
                 new ListPlayer(),
                 new BindMCAuth(),
                 new EditPassword(),
-                new PlayerStatistic(),
+//                new PlayerStatistic(),
                 new SendRconMessage(),
-                new Word()
+                new Word(),
+                new Bangumi()
         );
         bot.startBot();
     }
