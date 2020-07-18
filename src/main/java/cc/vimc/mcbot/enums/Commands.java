@@ -5,7 +5,7 @@ public enum Commands {
      * 命令全部用小写
      */
     HELP("help", "查看小叽帮助(<ゝω·)☆"),
-    BANGUMI("bangumi", "开启新番更新提醒~(大陆未购买版权则不会提醒)"),
+    BANGUMI("bangumi", "开启新番更新提醒(大陆未购买版权则不会提醒)，排除你不喜欢的新番如:/bangumi rm 240835"),
     LIST("list", "查看在线玩家列表w"),
     RCON("rcon", "Minecraft服务端RCON命令（管理员权限）"),
 //    STATISTIC("statistic", "获取玩家在线统计数据"),
