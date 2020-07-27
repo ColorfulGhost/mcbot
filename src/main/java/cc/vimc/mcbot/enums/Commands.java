@@ -6,6 +6,8 @@ public enum Commands {
      */
     HELP("help", "查看小叽帮助(<ゝω·)☆"),
     BANGUMI("bangumi", "开启新番更新提醒(大陆未购买版权则不会提醒)，排除你不喜欢的新番如:/bangumi rm 240835"),
+    AMQ("amq","来一碗毒鸡汤~(AMQ <anti-motivational quotes>)"),
+    ANIME("anime","以图搜番 食用方法：/anime [图片]"),
     LIST("list", "查看在线玩家列表w"),
     RCON("rcon", "Minecraft服务端RCON命令（管理员权限）"),
 //    STATISTIC("statistic", "获取玩家在线统计数据"),

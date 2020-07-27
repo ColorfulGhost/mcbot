@@ -40,7 +40,8 @@ public class Bot {
                 new ListPlayer(),
                 new BindMCAuth(),
                 new EditPassword(),
-//                new PlayerStatistic(),
+                new Anime(),
+                new AntiMotivationalQuotes(),
                 new SendRconMessage(),
                 new Word(),
                 new Bangumi()

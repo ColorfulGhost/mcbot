@@ -97,7 +97,7 @@ public class ScheduledMessage {
             String timeCN = bgm.getTimeCN();
             if (!StringUtils.isEmpty(timeCN) && timeCN.equals(hhmmString)) {
                 result.add("《").add(bgm.getTitleCN()).add("》").add("更新了！\n")
-                        .add("\n放送地址：\n");
+                        .add("放送地址：\n");
                 for (String url : bgm.getOnAirSite()) {
                     result.add(url + "\n");
                 }
@@ -121,17 +121,22 @@ public class ScheduledMessage {
                 excludeBangumi.computeIfAbsent(coolQStatus.getQq(), x -> new HashSet<>()).addAll(splitBangumiExclude);
             }
         }
-        result.add("通知下面的小伙伴开饭啦，如果不喜欢这个番剧可以：/bangumi rm ").add(bgmId);
+        result.add("通知下面的小伙伴开饭啦，如果不喜欢这个番剧可以：/bangumi rm ").add(bgmId).add("\n");
 
 
         int finalBgmId = bgmId;
         //过滤不喜欢的番剧
         qqByQQGroup.forEach((group, qqs) -> {
+            StringBuilder atMember = new StringBuilder();
             qqs.forEach(qq -> {
-                if (!MapUtil.isEmpty(excludeBangumi)&& !excludeBangumi.get(qq).contains(finalBgmId)) {
-                    result.add(new ComponentAt(qq));
+                if (!MapUtil.isEmpty(excludeBangumi) && !(excludeBangumi.containsKey(qq) && excludeBangumi.get(qq).contains(String.valueOf(finalBgmId)))) {
+                    atMember.append(new ComponentAt(qq));
                 }
             });
+            if (StringUtils.isEmpty(atMember.toString())) {
+                return;
+            }
+            result.add(atMember);
             icqHttpApi.sendGroupMsg(group, result.toString());
         });
 
