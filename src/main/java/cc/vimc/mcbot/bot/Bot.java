@@ -44,6 +44,7 @@ public class Bot {
                 new AntiMotivationalQuotes(),
                 new SendRconMessage(),
                 new Word(),
+                new StartServer(),
                 new Bangumi()
         );
         bot.startBot();

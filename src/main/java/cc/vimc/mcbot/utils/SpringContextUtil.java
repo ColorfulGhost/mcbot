@@ -3,8 +3,8 @@ package cc.vimc.mcbot.utils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class SpringContextUtil implements ApplicationContextAware {
@@ -19,5 +19,10 @@ public class SpringContextUtil implements ApplicationContextAware {
 
     public static <T> T getBean(Class<T> classT) {
         return appContext.getBean(classT);
+    }
+
+    public static String getEnvProperty(String key){
+        Environment environment = appContext.getEnvironment();
+       return environment.getProperty(key);
     }
 }
