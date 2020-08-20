@@ -17,7 +17,7 @@ public class ListPlayer implements EverywhereCommand {
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
         MessageBuilder messageBuilder = new MessageBuilder();
-        if (MCUtils.verifyBindQQ(sender.getId())) {
+        if (MCUtils.verifyNoBindQQ(sender.getId())) {
             messageBuilder.add(ConstantMessages.PLAYER_NOT_EXIST.getMessage());
             return messageBuilder.toString();
         }

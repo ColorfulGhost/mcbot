@@ -63,7 +63,6 @@ public class ScheduledMessage {
 
         this.lastQuarterBangumi = HttpUtil.get(lastQuarterBangumiURL);
     }
-
     @Scheduled(cron = "0 */1 * * * ?")
     public void sendBangumiUpdateTime() {
         Collection<Object> bgList = JSON.parseObject(this.lastQuarterBangumi).values();
@@ -86,12 +85,9 @@ public class ScheduledMessage {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-
-
         MessageBuilder result = new MessageBuilder();
-
-
         List<BangumiList> todayBGM = tmpBGMList.get(String.valueOf(dayOfWeek - 1));
+
         int bgmId = 0;
         for (BangumiList bgm : todayBGM) {
             String timeCN = bgm.getTimeCN();
@@ -122,14 +118,14 @@ public class ScheduledMessage {
             }
         }
         result.add("通知下面的小伙伴开饭啦，如果不喜欢这个番剧可以：/bangumi rm ").add(bgmId).add("\n");
-
-
         int finalBgmId = bgmId;
         //过滤不喜欢的番剧
         qqByQQGroup.forEach((group, qqs) -> {
             StringBuilder atMember = new StringBuilder();
             qqs.forEach(qq -> {
-                if (!MapUtil.isEmpty(excludeBangumi) && !(excludeBangumi.containsKey(qq) && excludeBangumi.get(qq).contains(String.valueOf(finalBgmId)))) {
+                if (!MapUtil.isEmpty(excludeBangumi) &&
+                        !(excludeBangumi.containsKey(qq) && excludeBangumi.get(qq)
+                                .contains(String.valueOf(finalBgmId)))) {
                     atMember.append(new ComponentAt(qq));
                 }
             });
@@ -144,12 +140,8 @@ public class ScheduledMessage {
     }
 
     @Scheduled(cron = "50 59 23 * * ?")
-//    @Scheduled(cron = "0/10 * * * * ?")
     public void sendPlayerStatistics() {
-
-
         List<FlexBleLoginUser> todayLoginPlayers = userMapper.getTodayLoginPlayers();
-
         if (CollectionUtils.isEmpty(todayLoginPlayers)) {
             icqHttpApi.sendGroupMsg(minecraftQQGroup, "今日没有玩家在线OAO");
             return;

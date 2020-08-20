@@ -6,6 +6,7 @@ public enum Commands {
      */
     HELP("help", "查看小叽帮助(<ゝω·)☆"),
     BANGUMI("bangumi", "开启新番更新提醒(大陆未购买版权则不会提醒)，排除你不喜欢的新番如:/bangumi rm 240835"),
+    SETU("setu", "涩图！可加关键字，r18五五开检索。如：/setu yjx4"),
     AMQ("amq","到点了，网抑云开启 (AMQ <anti-motivational quotes>)"),
     START_SERVER("startserver","开启服务端，现在支持服务端：AcademyCraft 如：/startserver AcademyCraft"),
     ANIME("anime","以图搜番 食用方法：/anime [图片]"),

@@ -44,6 +44,7 @@ public class Bot {
                 new AntiMotivationalQuotes(),
                 new SendRconMessage(),
                 new Word(),
+                new SeTu(),
                 new StartServer(),
                 new Bangumi()
         );

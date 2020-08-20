@@ -6,6 +6,8 @@ import cc.moecraft.icq.event.events.message.EventMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
+import cc.vimc.mcbot.enums.ConstantMessages;
+import cc.vimc.mcbot.utils.MCUtils;
 import cc.vimc.mcbot.utils.MessageUtil;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.http.HttpStatus;
@@ -22,10 +24,15 @@ public class StartServer implements EverywhereCommand {
 
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
+        MessageBuilder messageBuilder = new MessageBuilder();
+
+        if (MCUtils.verifyNoBindQQ(sender.getId())) {
+            messageBuilder.add(ConstantMessages.PLAYER_NOT_EXIST.getMessage());
+            return messageBuilder.toString();
+        }
         String apiKey = SpringContextUtil.getEnvProperty("MCSM.api.admin.key");
         String url = SpringContextUtil.getEnvProperty("MCSM.api.url");
         String serverName = MessageUtil.removeCommandPrefix(command, event.getMessage());
-        MessageBuilder messageBuilder = new MessageBuilder();
 
         String data;
         try {
