@@ -58,9 +58,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.hydevelop</groupId>
+            <groupId>com.github.ColorfulGhost</groupId>
             <artifactId>PicqBotX</artifactId>
-            <version>4.15.0.1052</version>
+            <version>4.15.0.1059</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

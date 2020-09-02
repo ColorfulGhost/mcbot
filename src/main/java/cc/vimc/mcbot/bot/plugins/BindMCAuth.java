@@ -10,7 +10,7 @@ import cc.vimc.mcbot.mapper.CoolQUserMapper;
 import cc.vimc.mcbot.mapper.UserMapper;
 import cc.vimc.mcbot.pojo.FlexBleLoginUser;
 import cc.vimc.mcbot.utils.BcryptHasher;
-import cc.vimc.mcbot.utils.MessageUtil;
+import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import cc.vimc.mcbot.utils.UUIDUtil;
 import cn.hutool.core.text.StrSpliter;
@@ -33,7 +33,7 @@ public class BindMCAuth implements PrivateCommand {
     public String privateMessage(EventPrivateMessage event, User sender, String command, ArrayList<String> args) {
         UserMapper userMapper = SpringContextUtil.getBean(UserMapper.class);
         MessageBuilder messageBuilder = new MessageBuilder();
-        String userNameAndPassword = MessageUtil.removeCommandPrefix(command, event.getMessage());
+        String userNameAndPassword = BotUtils.removeCommandPrefix(command, event.getMessage());
 
         List<String> splitUserNameAndPassword = StrSpliter.split(userNameAndPassword, " ", 2, true, true);
         if (splitUserNameAndPassword.size() != 2) {

@@ -2,56 +2,43 @@ package cc.vimc.mcbot.bot.plugins;
 
 import cc.moecraft.icq.command.CommandProperties;
 import cc.moecraft.icq.command.interfaces.EverywhereCommand;
+import cc.moecraft.icq.event.events.message.EventGroupMessage;
 import cc.moecraft.icq.event.events.message.EventMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentImage;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.pojo.SeTuResponseModel;
-import cc.vimc.mcbot.utils.MessageUtil;
+import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.http.HttpStatus;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
 
+@Log4j2
 public class SeTu implements EverywhereCommand {
     private int tmpNextKeyIndex = 0;
+
 
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
         MessageBuilder messageBuilder = new MessageBuilder();
-        String keyword = MessageUtil.removeCommandPrefix(command, event.getMessage());
-        Map<String, Object> requestData = new HashMap<>();
+        String keyword = BotUtils.removeCommandPrefix(command, event.getMessage());
 
-        List<String> seTuAPIKeys = Arrays.asList(SpringContextUtil.getEnvProperty("setu.api.key").split(","));
-        while (true) {
-            if (tmpNextKeyIndex < seTuAPIKeys.size()) {
-                requestData.put("apikey", seTuAPIKeys.get(tmpNextKeyIndex));
-                tmpNextKeyIndex++;
-                break;
-            } else {
-                tmpNextKeyIndex = 0;
-            }
+        Long groupId = ((EventGroupMessage) event).getGroupId();
+        //藤原拓海豆腐店
+        if (groupId != 199324349) {
+            messageBuilder.add("咱被弟弟举报了OAO！涩图功能不对外公开，只可以在涩图群使用w");
+            return messageBuilder.toString();
         }
-        if (!StringUtils.isEmpty(keyword)) {
-            requestData.put("keyword", keyword);
-        }
+        SeTuResponseModel seTuResponseModel = seTuAPI(keyword, 2, 1);
 
-        requestData.put("r18", 2);
-        requestData.put("num", 1);
-        requestData.put("proxy", "i.pixiv.cat");
-        requestData.put("size1200", true);
-
-        String jsonData;
-        SeTuResponseModel seTuResponseModel;
-        try {
-            jsonData = HttpUtil.get("https://api.lolicon.app/setu/", requestData);
-            seTuResponseModel = JSON.parseObject(jsonData, SeTuResponseModel.class);
-        } catch (Exception e) {
-            messageBuilder.add("调用服务出错或JSON转换失败").add(e.getMessage());
+        if (seTuResponseModel == null) {
+            messageBuilder.add("调用色图服务出错");
             return messageBuilder.toString();
         }
         if (seTuResponseModel.getCode() != 0) {
@@ -73,11 +60,57 @@ public class SeTu implements EverywhereCommand {
             return messageBuilder.toString();
 
         }
-        Optional<SeTuResponseModel.Setu> firstSeTu = seTuResponseModel.getData().stream().findFirst();
+        SeTuResponseModel.Setu firstSeTu = seTuResponseModel.getData().stream().findFirst().get();
+        if (firstSeTu.isR18()) {
+            BotUtils botUtils = SpringContextUtil.getBean(BotUtils.class);
+            botUtils.delMassageForMs(event,10000);
+        }
+        messageBuilder.add(new ComponentImage(firstSeTu.getUrl()));
+        messageBuilder.add("作品名称：").add(firstSeTu.getTitle()).add("\n画师：").add(firstSeTu.getAuthor());
 
-        messageBuilder.add(new ComponentImage(firstSeTu.get().getUrl()));
-        messageBuilder.add("作品名称：").add(firstSeTu.get().getTitle()).add("，画师：").add(firstSeTu.get().getAuthor());
+
         return messageBuilder.toString();
+    }
+
+
+    /**
+     * 文档：https://api.lolicon.app/
+     *
+     * @param keyword 若指定关键字，将会返回从插画标题、作者、标签中模糊搜索的结果
+     * @param r18     0为非 R18，1为 R18，2为混合
+     * @param num     一次返回的结果数量，范围为1到10，不提供 APIKEY 时固定为1；在指定关键字的情况下，结果数量可能会不足指定的数量
+     * @return
+     */
+    public SeTuResponseModel seTuAPI(String keyword, int r18, int num) {
+        Map<String, Object> requestData = new HashMap<>();
+        List<String> seTuAPIKeys = Arrays.asList(SpringContextUtil.getEnvProperty("setu.api.key").split(","));
+        while (true) {
+            if (tmpNextKeyIndex < seTuAPIKeys.size()) {
+                requestData.put("apikey", seTuAPIKeys.get(tmpNextKeyIndex));
+                tmpNextKeyIndex++;
+                break;
+            } else {
+                tmpNextKeyIndex = 0;
+            }
+        }
+        if (!StringUtils.isEmpty(keyword)) {
+            requestData.put("keyword", keyword);
+        }
+        requestData.put("r18", r18);
+        requestData.put("num", num);
+        requestData.put("proxy", "i.pixiv.cat");
+        requestData.put("size1200", true);
+        String jsonData;
+        SeTuResponseModel seTuResponseModel;
+        try {
+            jsonData = HttpUtil.get("https://api.lolicon.app/setu/", requestData);
+            seTuResponseModel = JSON.parseObject(jsonData, SeTuResponseModel.class);
+        } catch (Exception e) {
+            log.error("调用色图服务出错", e);
+            return null;
+        }
+
+        return seTuResponseModel;
     }
 
     @Override

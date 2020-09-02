@@ -2,7 +2,7 @@ package cc.vimc.mcbot.bot;
 
 import cc.moecraft.icq.PicqBotX;
 import cc.moecraft.icq.PicqConfig;
-import cc.vimc.mcbot.bot.plugins.*;
+import cc.vimc.mcbot.utils.BotUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +13,8 @@ public class Bot {
 
     @Value("${coolq.port}")
     private int cqPort;
+    @Value("${coolq.port.test}")
+    private int cqPortTest;
     @Value("${coolq.bot.name}")
     private String botName;
     @Value("${coolq.post.port}")
@@ -32,21 +34,12 @@ public class Bot {
 
         this.bot = new PicqBotX(config);
 
-        this.bot.addAccount(botName, postURL, cqPort);
+//        this.bot.addAccount(botName, postURL, cqPort);
+        this.bot.addAccount(botName, postURL, cqPortTest);
         this.bot.enableCommandManager("/");
         this.bot.getEventManager().registerListeners(new MessageListener());
         this.bot.getCommandManager().registerCommands(
-                new Help(),
-                new ListPlayer(),
-                new BindMCAuth(),
-                new EditPassword(),
-                new Anime(),
-                new AntiMotivationalQuotes(),
-                new SendRconMessage(),
-                new Word(),
-                new SeTu(),
-                new StartServer(),
-                new Bangumi()
+                BotUtils.getAllPlugins()
         );
         bot.startBot();
     }

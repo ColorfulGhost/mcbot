@@ -9,7 +9,7 @@ import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.pojo.AnimeModel;
 import cc.vimc.mcbot.pojo.DocsItem;
-import cc.vimc.mcbot.utils.MessageUtil;
+import cc.vimc.mcbot.utils.BotUtils;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -24,7 +24,7 @@ public class Anime implements EverywhereCommand {
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
         MessageBuilder messageBuilder = new MessageBuilder();
 
-        String coolQImageCode = MessageUtil.removeCommandPrefix(command, event.getMessage());
+        String coolQImageCode = BotUtils.removeCommandPrefix(command, event.getMessage());
 
         String imageURL = ReUtil.get("\\[CQ\\:image,file=(.*),url=(.*)\\]", coolQImageCode, 2);
         String result = HttpUtil.get("https://trace.moe/api/search?url=" + imageURL);

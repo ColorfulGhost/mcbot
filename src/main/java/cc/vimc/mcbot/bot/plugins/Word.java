@@ -5,14 +5,11 @@ import cc.moecraft.icq.command.interfaces.EverywhereCommand;
 import cc.moecraft.icq.event.events.message.EventMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
-import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.enums.ConstantMessages;
 import cc.vimc.mcbot.mapper.CoolQKeyWordMapper;
 import cc.vimc.mcbot.mapper.CoolQUserMapper;
-import cc.vimc.mcbot.pojo.CoolQKeyWord;
 import cc.vimc.mcbot.pojo.CoolQUser;
-import cc.vimc.mcbot.rcon.RconCommand;
-import cc.vimc.mcbot.utils.MessageUtil;
+import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.core.text.StrSpliter;
 
@@ -30,7 +27,7 @@ public class Word implements EverywhereCommand {
             return messageBuilder.toString();
         }
         CoolQKeyWordMapper coolQKeyWordMapper = SpringContextUtil.getBean(CoolQKeyWordMapper.class);
-        String typeAndContent = MessageUtil.removeCommandPrefix(command, event.getMessage());
+        String typeAndContent = BotUtils.removeCommandPrefix(command, event.getMessage());
         List<String> typeAndContentSplit = StrSpliter.split(typeAndContent, " ", 3, true, true);
         //类型 Q A  = 3
         if (typeAndContentSplit.size() != 3) {

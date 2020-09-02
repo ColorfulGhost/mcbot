@@ -10,7 +10,7 @@ import cc.moecraft.icq.user.GroupUser;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.mapper.CoolQStatusMapper;
 import cc.vimc.mcbot.pojo.CoolQStatus;
-import cc.vimc.mcbot.utils.MessageUtil;
+import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.core.text.StrSpliter;
 import org.springframework.util.StringUtils;
@@ -33,7 +33,7 @@ public class Bangumi implements GroupCommand {
         long groupId = group.getId();
         CoolQStatusMapper coolQStatusMapper = SpringContextUtil.getBean(CoolQStatusMapper.class);
         CoolQStatus checkExist = coolQStatusMapper.checkExist(qq, groupId);
-        String acceptMessage = MessageUtil.removeCommandPrefix(command, event.getMessage());
+        String acceptMessage = BotUtils.removeCommandPrefix(command, event.getMessage());
 
         messageBuilder.add(new ComponentAt(qq));
 

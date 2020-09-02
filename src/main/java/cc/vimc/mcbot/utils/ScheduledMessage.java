@@ -4,21 +4,23 @@ package cc.vimc.mcbot.utils;
 import cc.moecraft.icq.sender.IcqHttpApi;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentAt;
+import cc.moecraft.icq.sender.returndata.ReturnListData;
+import cc.moecraft.icq.sender.returndata.returnpojo.get.RGroup;
 import cc.vimc.mcbot.bot.Bot;
+import cc.vimc.mcbot.bot.plugins.SeTu;
 import cc.vimc.mcbot.mapper.CoolQStatusMapper;
 import cc.vimc.mcbot.mapper.NewHonorPlayerMapper;
 import cc.vimc.mcbot.mapper.UserMapper;
-import cc.vimc.mcbot.pojo.BangumiList;
-import cc.vimc.mcbot.pojo.CoolQStatus;
-import cc.vimc.mcbot.pojo.FlexBleLoginUser;
-import cc.vimc.mcbot.pojo.NewHonorPlayer;
+import cc.vimc.mcbot.pojo.*;
 import cc.vimc.mcbot.rcon.RconCommand;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.StrSpliter;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
+@Log4j2
 public class ScheduledMessage {
 
     @Autowired
@@ -49,7 +52,6 @@ public class ScheduledMessage {
     private IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
 
     private String lastQuarterBangumi;
-
     @Scheduled(cron = "0 0 5 * * ?")
     @PostConstruct
     public void getBangumiJSON() {
@@ -60,10 +62,44 @@ public class ScheduledMessage {
         Collection<String> quarterCollect = lastYear.values();
         Map<String, String> lastQuarter = (Map<String, String>) quarterCollect.toArray()[quarterCollect.size() - 1];
         String lastQuarterBangumiURL = lastQuarter.get("path");
-
         this.lastQuarterBangumi = HttpUtil.get(lastQuarterBangumiURL);
     }
+
+
+
     @Scheduled(cron = "0 */1 * * * ?")
+    public void randomSeTuForTime() {
+
+        Random r = new Random();
+        int randomSum = 0;
+
+        for (int i = 0; i < 3; i++) {
+            randomSum += r.nextInt(100);
+        }
+        if (randomSum < 233) {
+            return;
+        }
+        ReturnListData<RGroup> groupList = icqHttpApi.getGroupList();
+        if (groupList == null || CollectionUtil.isEmpty(groupList.getData())) {
+            return;
+        }
+
+        List<RGroup> groupListData = groupList.getData();
+        Random randomGroup = new Random();
+        RGroup rGroup = groupListData.get(randomGroup.nextInt(groupListData.size()));
+        Long groupId = rGroup.getGroupId();
+
+        SeTuResponseModel seTuResponseModel = new SeTu().seTuAPI("", 0, 1);
+        if (seTuResponseModel.getCode() != 0) {
+            return;
+        }
+        SeTuResponseModel.Setu setu = seTuResponseModel.getData().get(0);
+
+    }
+
+
+
+//    @Scheduled(cron = "0 */1 * * * ?")
     public void sendBangumiUpdateTime() {
         Collection<Object> bgList = JSON.parseObject(this.lastQuarterBangumi).values();
         List<BangumiList> bangumiList = Convert.convert(new TypeReference<List<BangumiList>>() {

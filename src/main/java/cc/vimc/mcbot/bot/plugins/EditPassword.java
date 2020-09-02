@@ -12,7 +12,7 @@ import cc.vimc.mcbot.mapper.UserMapper;
 import cc.vimc.mcbot.pojo.CoolQUser;
 import cc.vimc.mcbot.pojo.FlexBleLoginUser;
 import cc.vimc.mcbot.utils.BcryptHasher;
-import cc.vimc.mcbot.utils.MessageUtil;
+import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import org.springframework.util.StringUtils;
 
@@ -29,7 +29,7 @@ public class EditPassword implements PrivateCommand {
             return messageBuilder.toString();
 
         }
-        String password = MessageUtil.removeCommandPrefix(command, event.getMessage());
+        String password = BotUtils.removeCommandPrefix(command, event.getMessage());
         if (StringUtils.isEmpty(password)) {
             messageBuilder.add("密码不能为空！");
             return messageBuilder.toString();

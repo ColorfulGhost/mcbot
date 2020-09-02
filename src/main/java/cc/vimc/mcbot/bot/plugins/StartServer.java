@@ -8,7 +8,7 @@ import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.enums.ConstantMessages;
 import cc.vimc.mcbot.utils.MCUtils;
-import cc.vimc.mcbot.utils.MessageUtil;
+import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.http.HttpStatus;
 import cn.hutool.http.HttpUtil;
@@ -32,7 +32,7 @@ public class StartServer implements EverywhereCommand {
         }
         String apiKey = SpringContextUtil.getEnvProperty("MCSM.api.admin.key");
         String url = SpringContextUtil.getEnvProperty("MCSM.api.url");
-        String serverName = MessageUtil.removeCommandPrefix(command, event.getMessage());
+        String serverName = BotUtils.removeCommandPrefix(command, event.getMessage());
 
         String data;
         try {
