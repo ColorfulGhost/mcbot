@@ -4,6 +4,7 @@ package cc.vimc.mcbot.utils;
 import cc.moecraft.icq.sender.IcqHttpApi;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentAt;
+import cc.moecraft.icq.sender.message.components.ComponentImage;
 import cc.moecraft.icq.sender.returndata.ReturnListData;
 import cc.moecraft.icq.sender.returndata.returnpojo.get.RGroup;
 import cc.vimc.mcbot.bot.Bot;
@@ -52,6 +53,7 @@ public class ScheduledMessage {
     private IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
 
     private String lastQuarterBangumi;
+
     @Scheduled(cron = "0 0 5 * * ?")
     @PostConstruct
     public void getBangumiJSON() {
@@ -66,40 +68,54 @@ public class ScheduledMessage {
     }
 
 
-
     @Scheduled(cron = "0 */1 * * * ?")
-    public void randomSeTuForTime() {
+    public void randomSendMessageForTime() {
 
         Random r = new Random();
         int randomSum = 0;
 
+        //100范围内随机循环3次累计
         for (int i = 0; i < 3; i++) {
             randomSum += r.nextInt(100);
         }
-        if (randomSum < 233) {
-            return;
-        }
+
+
         ReturnListData<RGroup> groupList = icqHttpApi.getGroupList();
         if (groupList == null || CollectionUtil.isEmpty(groupList.getData())) {
             return;
         }
-
         List<RGroup> groupListData = groupList.getData();
+        //随机组
         Random randomGroup = new Random();
         RGroup rGroup = groupListData.get(randomGroup.nextInt(groupListData.size()));
         Long groupId = rGroup.getGroupId();
+        MessageBuilder messageBuilder = new MessageBuilder();
 
-        SeTuResponseModel seTuResponseModel = new SeTu().seTuAPI("", 0, 1);
-        if (seTuResponseModel.getCode() != 0) {
-            return;
+
+        //累计3次总和随机 数值越小调用到的概率略大
+        if (randomSum > 250) {
+            //随机涩图
+            SeTuResponseModel seTuResponseModel = new SeTu().seTuAPI("", 0, 1);
+            if (seTuResponseModel.getCode() != 0) {
+                return;
+            }
+            SeTuResponseModel.Setu setu = seTuResponseModel.getData().get(0);
+            messageBuilder.add(new ComponentImage(setu.getUrl()));
+        } else if (randomSum > 240) {
+            //随机一言
+            String result = HttpUtil.get("https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=e&c=f&c=h&c=j&c=k&c=l");
+            Hitokoto hitokoto = JSON.parseObject(result, Hitokoto.class);
+//            messageBuilder.add("『").add("" + hitokoto.getHitokoto()).add("』").add(" ———— ").add(hitokoto.getFrom());
+            messageBuilder.add("" + hitokoto.getHitokoto());
         }
-        SeTuResponseModel.Setu setu = seTuResponseModel.getData().get(0);
+
+
+        icqHttpApi.sendGroupMsg(groupId, messageBuilder.toString());
 
     }
 
 
-
-//    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */1 * * * ?")
     public void sendBangumiUpdateTime() {
         Collection<Object> bgList = JSON.parseObject(this.lastQuarterBangumi).values();
         List<BangumiList> bangumiList = Convert.convert(new TypeReference<List<BangumiList>>() {

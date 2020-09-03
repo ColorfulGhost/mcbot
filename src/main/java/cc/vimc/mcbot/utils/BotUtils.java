@@ -1,10 +1,9 @@
 package cc.vimc.mcbot.utils;
 
 import cc.moecraft.icq.command.interfaces.IcqCommand;
-import cc.moecraft.icq.event.events.message.EventMessage;
+import cc.moecraft.icq.sender.IcqHttpApi;
 import cn.hutool.core.util.ClassUtil;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -18,15 +17,13 @@ public class BotUtils {
         return content.replace("/" + command, "").trim();
     }
 
-    @Async
-    public void delMassageForMs(EventMessage eventMessage, int ms) {
-        Long messageId = eventMessage.getMessageId();
+    public static void delMassageForMs(IcqHttpApi icqHttpApi, Long messageId, int ms) {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
             log.error(e);
         }
-        eventMessage.getHttpApi().deleteMsg(messageId);
+        icqHttpApi.deleteMsg(messageId);
     }
 
     public static IcqCommand[] getAllPlugins() {

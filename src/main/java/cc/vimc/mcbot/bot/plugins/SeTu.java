@@ -11,6 +11,7 @@ import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.pojo.SeTuResponseModel;
 import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.SpringContextUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpStatus;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
@@ -62,8 +63,9 @@ public class SeTu implements EverywhereCommand {
         }
         SeTuResponseModel.Setu firstSeTu = seTuResponseModel.getData().stream().findFirst().get();
         if (firstSeTu.isR18()) {
-            BotUtils botUtils = SpringContextUtil.getBean(BotUtils.class);
-            botUtils.delMassageForMs(event,10000);
+            ThreadUtil.execAsync(() -> {
+                BotUtils.delMassageForMs(event.getHttpApi(), event.getMessageId(), 20000);
+            });
         }
         messageBuilder.add(new ComponentImage(firstSeTu.getUrl()));
         messageBuilder.add("作品名称：").add(firstSeTu.getTitle()).add("\n画师：").add(firstSeTu.getAuthor());

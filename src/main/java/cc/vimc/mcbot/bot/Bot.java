@@ -32,13 +32,13 @@ public class Bot {
         config.setDebug(true);
 
 
-        this.bot = new PicqBotX(config);
+        bot = new PicqBotX(config);
 
-//        this.bot.addAccount(botName, postURL, cqPort);
-        this.bot.addAccount(botName, postURL, cqPortTest);
-        this.bot.enableCommandManager("/");
-        this.bot.getEventManager().registerListeners(new MessageListener());
-        this.bot.getCommandManager().registerCommands(
+        this.bot.addAccount(botName, postURL, cqPort);
+//        bot.addAccount(botName, postURL, cqPortTest);
+        bot.enableCommandManager("/");
+        bot.getEventManager().registerListeners(new MessageListener());
+        bot.getCommandManager().registerCommands(
                 BotUtils.getAllPlugins()
         );
         bot.startBot();

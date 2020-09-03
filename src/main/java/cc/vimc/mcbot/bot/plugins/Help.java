@@ -18,8 +18,12 @@ public class Help implements EverywhereCommand {
         for (Commands commands : Commands.values()) {
             messageBuilder.add("/").add(commands.getCommand()).add("   ").add(commands.getDescription()).newLine();
         }
+//        ThreadUtil.execAsync(()->{
+//            BotUtils.delMassageForMs(event.getHttpApi(),event.getMessageId(),10000);
+//        });
         return messageBuilder.toString();
     }
+
 
     @Override
     public CommandProperties properties() {
