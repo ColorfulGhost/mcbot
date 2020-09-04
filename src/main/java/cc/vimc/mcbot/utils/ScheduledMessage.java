@@ -5,8 +5,6 @@ import cc.moecraft.icq.sender.IcqHttpApi;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentAt;
 import cc.moecraft.icq.sender.message.components.ComponentImage;
-import cc.moecraft.icq.sender.returndata.ReturnListData;
-import cc.moecraft.icq.sender.returndata.returnpojo.get.RGroup;
 import cc.vimc.mcbot.bot.Bot;
 import cc.vimc.mcbot.bot.plugins.SeTu;
 import cc.vimc.mcbot.mapper.CoolQStatusMapper;
@@ -14,7 +12,6 @@ import cc.vimc.mcbot.mapper.NewHonorPlayerMapper;
 import cc.vimc.mcbot.mapper.UserMapper;
 import cc.vimc.mcbot.pojo.*;
 import cc.vimc.mcbot.rcon.RconCommand;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.map.MapUtil;
@@ -69,53 +66,58 @@ public class ScheduledMessage {
 
 
     @Scheduled(cron = "0 */1 * * * ?")
-    public void randomSendMessageForTime() {
-
-        Random r = new Random();
-        int randomSum = 0;
-
-        //100范围内随机循环3次累计
-        for (int i = 0; i < 3; i++) {
-            randomSum += r.nextInt(100);
-        }
-
-
-        ReturnListData<RGroup> groupList = icqHttpApi.getGroupList();
-        if (groupList == null || CollectionUtil.isEmpty(groupList.getData())) {
-            return;
-        }
-        List<RGroup> groupListData = groupList.getData();
+    public void SendMessageFor1ms() {
+        //每秒番剧检测
+        sendBangumiUpdateTime();
+        //循环3次范围100累加
+        int randomSum = BotUtils.getRandomSum(3, 100);
         //随机组
-        Random randomGroup = new Random();
-        RGroup rGroup = groupListData.get(randomGroup.nextInt(groupListData.size()));
-        Long groupId = rGroup.getGroupId();
+        Long randomGroupId = BotUtils.getRandomGroupId();
         MessageBuilder messageBuilder = new MessageBuilder();
 
-
-        //累计3次总和随机 数值越小调用到的概率略大
+        //累计3次总和随机 数值越小调用到的每秒概率略大
         if (randomSum > 250) {
             //随机涩图
-            SeTuResponseModel seTuResponseModel = new SeTu().seTuAPI("", 0, 1);
-            if (seTuResponseModel.getCode() != 0) {
+            if (randomSeTu(messageBuilder)) {
                 return;
             }
-            SeTuResponseModel.Setu setu = seTuResponseModel.getData().get(0);
-            messageBuilder.add(new ComponentImage(setu.getUrl()));
         } else if (randomSum > 240) {
             //随机一言
-            String result = HttpUtil.get("https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=e&c=f&c=h&c=j&c=k&c=l");
-            Hitokoto hitokoto = JSON.parseObject(result, Hitokoto.class);
-//            messageBuilder.add("『").add("" + hitokoto.getHitokoto()).add("』").add(" ———— ").add(hitokoto.getFrom());
-            messageBuilder.add("" + hitokoto.getHitokoto());
+            if (randomKiToKoTo(messageBuilder)) {
+                return;
+            }
         }
 
 
-        icqHttpApi.sendGroupMsg(groupId, messageBuilder.toString());
+        icqHttpApi.sendGroupMsg(randomGroupId, messageBuilder.toString());
 
     }
 
+    private boolean randomSeTu(MessageBuilder messageBuilder) {
+        SeTuResponseModel seTuResponseModel = new SeTu().seTuAPI("", 0, 1);
+        if (seTuResponseModel.getCode() != 0) {
+            return true;
+        }
+        SeTuResponseModel.Setu setu = seTuResponseModel.getData().get(0);
+        messageBuilder.add(new ComponentImage(setu.getUrl()));
+        return false;
+    }
 
-    @Scheduled(cron = "0 */1 * * * ?")
+    private boolean randomKiToKoTo(MessageBuilder messageBuilder) {
+        String result = HttpUtil.get("https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=e&c=f&c=h&c=j&c=k&c=l");
+        Hitokoto hitokoto;
+        try {
+            hitokoto = JSON.parseObject(result, Hitokoto.class);
+        } catch (Exception e) {
+            log.error(e);
+            return true;
+        }
+//            messageBuilder.add("『").add("" + hitokoto.getHitokoto()).add("』").add(" ———— ").add(hitokoto.getFrom());
+        messageBuilder.add("" + hitokoto.getHitokoto());
+        return false;
+    }
+
+
     public void sendBangumiUpdateTime() {
         Collection<Object> bgList = JSON.parseObject(this.lastQuarterBangumi).values();
         List<BangumiList> bangumiList = Convert.convert(new TypeReference<List<BangumiList>>() {
