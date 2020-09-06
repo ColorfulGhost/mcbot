@@ -34,7 +34,7 @@ public class Bot {
 
         bot = new PicqBotX(config);
 
-        this.bot.addAccount(botName, postURL, cqPort);
+        bot.addAccount(botName, postURL, cqPort);
 //        bot.addAccount(botName, postURL, cqPortTest);
         bot.enableCommandManager("/");
         bot.getEventManager().registerListeners(new MessageListener());

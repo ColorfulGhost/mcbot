@@ -7,9 +7,8 @@ import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.ConstantMessages;
 import cc.vimc.mcbot.mapper.CoolQKeyWordMapper;
-import cc.vimc.mcbot.mapper.CoolQUserMapper;
-import cc.vimc.mcbot.pojo.CoolQUser;
 import cc.vimc.mcbot.utils.BotUtils;
+import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.core.text.StrSpliter;
 
@@ -20,9 +19,7 @@ public class Word implements EverywhereCommand {
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
         MessageBuilder messageBuilder = new MessageBuilder();
-        CoolQUserMapper coolQUserMapper = SpringContextUtil.getBean(CoolQUserMapper.class);
-        CoolQUser coolQUser = coolQUserMapper.selectQQExist(sender.getId());
-        if (coolQUser == null) {
+        if (BeanUtil.verifyNoBindQQ(sender.getId())) {
             messageBuilder.add(ConstantMessages.PLAYER_NOT_EXIST);
             return messageBuilder.toString();
         }

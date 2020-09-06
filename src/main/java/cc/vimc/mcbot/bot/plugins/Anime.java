@@ -10,7 +10,7 @@ import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.pojo.AnimeModel;
 import cc.vimc.mcbot.pojo.DocsItem;
 import cc.vimc.mcbot.utils.BotUtils;
-import cn.hutool.core.util.ReUtil;
+import cc.vimc.mcbot.utils.RegxUtils;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.log4j.Log4j2;
@@ -25,8 +25,7 @@ public class Anime implements EverywhereCommand {
         MessageBuilder messageBuilder = new MessageBuilder();
 
         String coolQImageCode = BotUtils.removeCommandPrefix(command, event.getMessage());
-
-        String imageURL = ReUtil.get("\\[CQ\\:image,file=(.*),url=(.*)\\]", coolQImageCode, 2);
+        String imageURL = new RegxUtils(coolQImageCode).getCQCodeImageURL();
         String result = HttpUtil.get("https://trace.moe/api/search?url=" + imageURL);
         messageBuilder.add(new ComponentAt(sender.getId())).add("\n");
         if ("\"Error reading imagenull\"".equals(result)) {
@@ -52,7 +51,7 @@ public class Anime implements EverywhereCommand {
             messageBuilder.add("第" + docsItem.getEpisode() + "集\n");
 
         }
-        messageBuilder.add("相似度：").add((int)(docsItem.getSimilarity() * 100)).add("%\n")
+        messageBuilder.add("相似度：").add((int) (docsItem.getSimilarity() * 100)).add("%\n")
                 .add("场景片段：")
                 .add((int) docsItem.getFrom() / 60).add(":").add((int) docsItem.getFrom() % 60)
                 .add(" - ")

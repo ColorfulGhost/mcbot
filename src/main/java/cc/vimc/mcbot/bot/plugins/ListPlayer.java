@@ -8,7 +8,7 @@ import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.enums.ConstantMessages;
 import cc.vimc.mcbot.rcon.RconCommand;
-import cc.vimc.mcbot.utils.MCUtils;
+import cc.vimc.mcbot.utils.BeanUtil;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class ListPlayer implements EverywhereCommand {
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
         MessageBuilder messageBuilder = new MessageBuilder();
-        if (MCUtils.verifyNoBindQQ(sender.getId())) {
+        if (BeanUtil.verifyNoBindQQ(sender.getId())) {
             messageBuilder.add(ConstantMessages.PLAYER_NOT_EXIST.getMessage());
             return messageBuilder.toString();
         }

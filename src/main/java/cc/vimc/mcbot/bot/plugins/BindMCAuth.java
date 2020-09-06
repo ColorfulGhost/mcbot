@@ -6,12 +6,10 @@ import cc.moecraft.icq.event.events.message.EventPrivateMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
-import cc.vimc.mcbot.mapper.CoolQUserMapper;
-import cc.vimc.mcbot.mapper.UserMapper;
 import cc.vimc.mcbot.pojo.FlexBleLoginUser;
 import cc.vimc.mcbot.utils.BcryptHasher;
 import cc.vimc.mcbot.utils.BotUtils;
-import cc.vimc.mcbot.utils.SpringContextUtil;
+import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.UUIDUtil;
 import cn.hutool.core.text.StrSpliter;
 import lombok.extern.log4j.Log4j2;
@@ -19,6 +17,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static cc.vimc.mcbot.utils.BeanUtil.coolQUserMapper;
 
 @Log4j2
 public class BindMCAuth implements PrivateCommand {
@@ -31,7 +31,6 @@ public class BindMCAuth implements PrivateCommand {
 
     @Override
     public String privateMessage(EventPrivateMessage event, User sender, String command, ArrayList<String> args) {
-        UserMapper userMapper = SpringContextUtil.getBean(UserMapper.class);
         MessageBuilder messageBuilder = new MessageBuilder();
         String userNameAndPassword = BotUtils.removeCommandPrefix(command, event.getMessage());
 
@@ -43,13 +42,12 @@ public class BindMCAuth implements PrivateCommand {
 
         String userName = splitUserNameAndPassword.get(0);
         String password = splitUserNameAndPassword.get(1);
-        FlexBleLoginUser userBaseInfo = userMapper.getUserBaseInfoByUserName(userName);
+        FlexBleLoginUser userBaseInfo = BeanUtil.userMapper.getUserBaseInfoByUserName(userName);
 
         if (userBaseInfo==null){
             messageBuilder.add("用户不存在，请检查后再绑定哈w");
             return messageBuilder.toString();
         }
-        CoolQUserMapper coolQUserMapper = SpringContextUtil.getBean(CoolQUserMapper.class);
         if (!StringUtils.isEmpty(coolQUserMapper.selectUserExist(userName))){
             messageBuilder.add("用户已经绑定过啦，请不要重复绑定哈w");
             return messageBuilder.toString();

@@ -16,6 +16,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.StrSpliter;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.log4j.Log4j2;
@@ -32,7 +33,7 @@ import java.util.*;
 
 @Component
 @Log4j2
-public class ScheduledMessage {
+public class ScheduledSendMessage {
 
     @Autowired
     private UserMapper userMapper;
@@ -83,9 +84,9 @@ public class ScheduledMessage {
             }
         } else if (randomSum > 240) {
             //随机一言
-            if (randomKiToKoTo(messageBuilder)) {
-                return;
-            }
+//            if (randomKiToKoTo(messageBuilder)) {
+//                return;
+//            }
         }
 
 
@@ -193,7 +194,7 @@ public class ScheduledMessage {
 
     }
 
-    @Scheduled(cron = "50 59 23 * * ?")
+    @Scheduled(cron = "59 59 23 * * ?")
     public void sendPlayerStatistics() {
         List<FlexBleLoginUser> todayLoginPlayers = userMapper.getTodayLoginPlayers();
         if (CollectionUtils.isEmpty(todayLoginPlayers)) {
@@ -236,6 +237,13 @@ public class ScheduledMessage {
                     .append(convertChineseTime(totalTime))
                     .append("\n挂机总时长：")
                     .append(convertChineseTime(total.split("\\|")[1].split(" - ")[0]));
+        }
+        Long randomGroupId = BotUtils.getRandomGroupId();
+
+        ThreadUtil.sleep(1000);
+        //毒鸡汤 到点了！
+        for (Long QQGroup : BotUtils.getAllGroup()) {
+            icqHttpApi.sendGroupMsg(QQGroup, BeanUtil.getSoul());
         }
         icqHttpApi.sendGroupMsg(minecraftQQGroup, retMessage.toString());
     }

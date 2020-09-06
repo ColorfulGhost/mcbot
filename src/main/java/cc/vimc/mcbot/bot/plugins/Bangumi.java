@@ -8,15 +8,15 @@ import cc.moecraft.icq.sender.message.components.ComponentAt;
 import cc.moecraft.icq.user.Group;
 import cc.moecraft.icq.user.GroupUser;
 import cc.vimc.mcbot.enums.Commands;
-import cc.vimc.mcbot.mapper.CoolQStatusMapper;
 import cc.vimc.mcbot.pojo.CoolQStatus;
 import cc.vimc.mcbot.utils.BotUtils;
-import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.core.text.StrSpliter;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static cc.vimc.mcbot.utils.BeanUtil.coolQStatusMapper;
 
 public class Bangumi implements GroupCommand {
 
@@ -31,7 +31,6 @@ public class Bangumi implements GroupCommand {
         MessageBuilder messageBuilder = new MessageBuilder();
         long qq = sender.getId();
         long groupId = group.getId();
-        CoolQStatusMapper coolQStatusMapper = SpringContextUtil.getBean(CoolQStatusMapper.class);
         CoolQStatus checkExist = coolQStatusMapper.checkExist(qq, groupId);
         String acceptMessage = BotUtils.removeCommandPrefix(command, event.getMessage());
 

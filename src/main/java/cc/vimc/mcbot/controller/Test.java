@@ -4,32 +4,48 @@ package cc.vimc.mcbot.controller;
 import cc.vimc.mcbot.pojo.BangumiList;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.Cipher;
-import java.security.Key;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.IsoFields;
 import java.util.*;
-import java.util.stream.Collectors;
 
+@Log4j2
 @RestController("/test")
 public class Test {
     public static final byte[] h = new byte[]{
             65, 80, 77, 80, 89, 68, 90, 70, 89, 68,
             90, 70, 65, 80, 77, 80, 65, 80, 77, 80,
             89, 68, 90, 70};
+
+
+    @RequestMapping("/2")
+    public void test2(){
+//        String trainDataFile = "resources/tessdata";
+        String fileName = "C:/Users/a8156/Desktop/QQ图片20200731193854.jpg";
+//
+//        Tesseract tesseract = new Tesseract();
+//        tesseract.setDatapath("D:/Code/Java/mcbot/src/main/resources/tessdata");
+//        tesseract.setLanguage("chi_sim");
+//        try {
+//            String s = tesseract.doOCR(new File(fileName));
+//            log.error(s);
+//        } catch (TesseractException e) {
+//            e.printStackTrace();
+//        }
+
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("image", FileUtil.file(fileName));
+
+        HttpUtil.post("http://192.168.1.220:88/doOCR",args);
+    }
+
 
     @RequestMapping("/1")
     public void test() {
