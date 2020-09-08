@@ -4,6 +4,7 @@ package cc.vimc.mcbot.utils;
 import cc.moecraft.icq.sender.IcqHttpApi;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentAt;
+import cc.moecraft.icq.sender.message.components.ComponentFace;
 import cc.moecraft.icq.sender.message.components.ComponentImage;
 import cc.vimc.mcbot.bot.Bot;
 import cc.vimc.mcbot.bot.plugins.SeTu;
@@ -77,7 +78,7 @@ public class ScheduledSendMessage {
         MessageBuilder messageBuilder = new MessageBuilder();
 
         //累计3次总和随机 数值越小调用到的每秒概率略大
-        if (randomSum > 250) {
+        if (randomSum > 260) {
             //随机涩图
             if (randomSeTu(messageBuilder)) {
                 return;
@@ -238,12 +239,11 @@ public class ScheduledSendMessage {
                     .append("\n挂机总时长：")
                     .append(convertChineseTime(total.split("\\|")[1].split(" - ")[0]));
         }
-        Long randomGroupId = BotUtils.getRandomGroupId();
 
         ThreadUtil.sleep(1000);
         //毒鸡汤 到点了！
         for (Long QQGroup : BotUtils.getAllGroup()) {
-            icqHttpApi.sendGroupMsg(QQGroup, BeanUtil.getSoul());
+            icqHttpApi.sendGroupMsg(QQGroup, new MessageBuilder().add(new ComponentFace(3)).add("到点了\n").toString());
         }
         icqHttpApi.sendGroupMsg(minecraftQQGroup, retMessage.toString());
     }

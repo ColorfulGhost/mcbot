@@ -2,7 +2,6 @@ package cc.vimc.mcbot.bot;
 
 import cc.moecraft.icq.PicqBotX;
 import cc.moecraft.icq.PicqConfig;
-import cc.vimc.mcbot.utils.BotUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,9 +37,7 @@ public class Bot {
 //        bot.addAccount(botName, postURL, cqPortTest);
         bot.enableCommandManager("/");
         bot.getEventManager().registerListeners(new MessageListener());
-        bot.getCommandManager().registerCommands(
-                BotUtils.getAllPlugins()
-        );
+        bot.getCommandManager().registerAllCommands("cc.vimc.mcbot.bot.plugins");
         bot.startBot();
     }
 

@@ -20,7 +20,7 @@ public class BotUtils {
     private static IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
 
 
-    public static final String[] SEX_KEYWORD = {"开车", "涩图", "色图", "营养", "开冲","够色"};
+    public static final List<String> LSB_KEYWORD = Arrays.asList("开车", "涩图", "色图", "营养", "开冲","够色","摩多","兴奋","黄图");
 
     /**
      * @param
@@ -80,22 +80,22 @@ public class BotUtils {
      * @param
      * @return cc.moecraft.icq.command.interfaces.IcqCommand[]
      * @Description 实例化Plugins下所有插件
-     * @author wlwang3
+     * @author ColorfulGhost
      * @date 2020/9/6
      */
-    public static IcqCommand[] getAllPlugins() {
+    public static IcqCommand[] loadAllPlugins() {
 
-        Set<Class<?>> classes = ClassUtil.scanPackage("cc.vimc.mcbot.bot.plugins");
-        Set<IcqCommand> pluginsClazz = new HashSet<>();
-        for (Class<?> aClass : classes) {
+        Set<Class<?>> scanClasses = ClassUtil.scanPackage("");
+        Set<IcqCommand> pluginsClasses = new HashSet<>();
+        for (Class<?> pluginClass : scanClasses) {
             try {
-                IcqCommand icqCommand = (IcqCommand) aClass.newInstance();
-                pluginsClazz.add(icqCommand);
+                IcqCommand icqCommand = (IcqCommand) pluginClass.newInstance();
+                pluginsClasses.add(icqCommand);
             } catch (InstantiationException | IllegalAccessException e) {
                 log.error(e);
             }
         }
-        return pluginsClazz.toArray(new IcqCommand[pluginsClazz.size()]);
+        return pluginsClasses.toArray(new IcqCommand[pluginsClasses.size()]);
 
     }
 
