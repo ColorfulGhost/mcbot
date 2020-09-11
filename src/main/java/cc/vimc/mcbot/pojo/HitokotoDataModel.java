@@ -5,7 +5,7 @@ import lombok.Data;
 
 
 @Data
-public class Hitokoto{
+public class HitokotoDataModel {
 
 	@JSONField(name="hitokoto")
 	private String hitokoto;

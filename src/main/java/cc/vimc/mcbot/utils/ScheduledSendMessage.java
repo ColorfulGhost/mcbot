@@ -7,6 +7,8 @@ import cc.moecraft.icq.sender.message.components.ComponentAt;
 import cc.moecraft.icq.sender.message.components.ComponentFace;
 import cc.moecraft.icq.sender.message.components.ComponentImage;
 import cc.vimc.mcbot.bot.Bot;
+import cc.vimc.mcbot.bot.plugins.Hitokoto;
+import cc.vimc.mcbot.bot.plugins.MiBand;
 import cc.vimc.mcbot.bot.plugins.SeTu;
 import cc.vimc.mcbot.mapper.CoolQStatusMapper;
 import cc.vimc.mcbot.mapper.NewHonorPlayerMapper;
@@ -105,19 +107,6 @@ public class ScheduledSendMessage {
         return false;
     }
 
-    private boolean randomKiToKoTo(MessageBuilder messageBuilder) {
-        String result = HttpUtil.get("https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=e&c=f&c=h&c=j&c=k&c=l");
-        Hitokoto hitokoto;
-        try {
-            hitokoto = JSON.parseObject(result, Hitokoto.class);
-        } catch (Exception e) {
-            log.error(e);
-            return true;
-        }
-//            messageBuilder.add("『").add("" + hitokoto.getHitokoto()).add("』").add(" ———— ").add(hitokoto.getFrom());
-        messageBuilder.add("" + hitokoto.getHitokoto());
-        return false;
-    }
 
 
     public void sendBangumiUpdateTime() {
@@ -193,6 +182,21 @@ public class ScheduledSendMessage {
         });
 
 
+    }
+    @Scheduled(cron = "00 58 23 * * ?")
+    public void sendQQZoneMessage(){
+
+        MessageBuilder messageBuilder = new MessageBuilder();
+
+        Hitokoto.randomKiToKoTo(messageBuilder);
+        messageBuilder.add("\n");
+        MiBand.getMiBandData(messageBuilder);
+
+        messageBuilder.add("\n本条说说驱动：https://github.com/ColorfulGhost/QzoneHuhuRobot");
+
+        Map<String,Object> param = new HashMap<>();
+        param.put("msg",messageBuilder.toString());
+        HttpUtil.post("http://192.168.1.220:89/sendMsgToQQZone",param);
     }
 
     @Scheduled(cron = "59 59 23 * * ?")

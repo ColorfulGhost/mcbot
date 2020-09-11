@@ -11,6 +11,8 @@ public enum Commands {
     START_SERVER("startserver","开启服务端，现在支持服务端：AcademyCraft 如：/startserver AcademyCraft"),
     ANIME("anime","以图搜番 食用方法：/anime [图片]"),
     LIST("list", "查看在线玩家列表w"),
+    MIBAND("miband", "查看老王今日运动数据"),
+    HITOKOTO("hitokoto", "一言"),
     RCON("rcon", "Minecraft服务端RCON命令（管理员权限）"),
 //    STATISTIC("statistic", "获取玩家在线统计数据"),
     BIND("bind", "QQ绑定Minecraft账号。私聊我，如：/bind yjx4 password"),

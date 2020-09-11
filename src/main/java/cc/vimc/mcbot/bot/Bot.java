@@ -33,8 +33,8 @@ public class Bot {
 
         bot = new PicqBotX(config);
 
-        bot.addAccount(botName, postURL, cqPort);
-//        bot.addAccount(botName, postURL, cqPortTest);
+//        bot.addAccount(botName, postURL, cqPort);
+        bot.addAccount(botName, postURL, cqPortTest);
         bot.enableCommandManager("/");
         bot.getEventManager().registerListeners(new MessageListener());
         bot.getCommandManager().registerAllCommands("cc.vimc.mcbot.bot.plugins");
