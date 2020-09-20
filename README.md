@@ -51,6 +51,10 @@
 
 
 ## 其他
+ 可以开启GPU加速，CPU实在太慢了而且OCR时候CPU占满会影响其他程序运行。
+ 
  如果服务器上有显卡 显存在4G以上 显存小于2G就洗洗睡了，只能CPU运算。当然显存越大识别速度越快。 
  [ocr-http-api]( https://github.com/ColorfulGhost/ocr-http-api) 
- 可以开启GPU加速，CPU实在太慢了而且OCR时候CPU占满会影响其他程序运行
+
+ 
+ ![psc.jpg](http://ww1.sinaimg.cn/large/be659b6cly1gixaobp9g0j218g1natn6.jpg)
