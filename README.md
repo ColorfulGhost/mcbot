@@ -38,3 +38,19 @@
 4. 涩图API地址：https://api.lolicon.app/
 5. miband 获取小米手环4数据 [miband4](https://github.com/ColorfulGhost/miband4) 二次开发对外提供HTTP接口
 6. bangumi订阅数据源来自：http://bgmlist.com/
+
+## 环境
+- JDK 1.8
+- Redis
+- Python 3.6+
+- minecraft Server RCON
+- MySQL
+- CUDA
+- easyocr
+...
+
+
+## 其他
+ 如果服务器上有显卡 显存在4G以上 显存小于2G就洗洗睡了，只能CPU运算。当然显存越大识别速度越快。 
+ [ocr-http-api]( https://github.com/ColorfulGhost/ocr-http-api) 
+ 可以开启GPU加速，CPU实在太慢了而且OCR时候CPU占满会影响其他程序运行
