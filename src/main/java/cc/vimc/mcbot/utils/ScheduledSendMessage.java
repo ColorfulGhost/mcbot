@@ -47,6 +47,9 @@ public class ScheduledSendMessage {
     @Autowired
     private CoolQStatusMapper coolQStatusMapper;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Value("${minecraft.qq.group}")
     private Long minecraftQQGroup;
 
@@ -98,7 +101,7 @@ public class ScheduledSendMessage {
     }
 
     private boolean randomSeTu(MessageBuilder messageBuilder) {
-        SeTuResponseModel seTuResponseModel = new SeTu().seTuAPI("", 0, 1);
+        SeTuResponseModel seTuResponseModel = new SeTu().seTuApi("", 0, 1);
         if (seTuResponseModel.getCode() != 0) {
             return true;
         }
@@ -188,9 +191,15 @@ public class ScheduledSendMessage {
 
         MessageBuilder messageBuilder = new MessageBuilder();
 
-        Hitokoto.randomKiToKoTo(messageBuilder);
-        messageBuilder.add("\n");
         MiBand.getMiBandData(messageBuilder);
+
+        messageBuilder.add("\n今日涩图API调用次数：").add(redisUtil.get(RedisUtil.BOT_SETU_COUNT));
+        messageBuilder.add("\n一言：");
+        Hitokoto.randomKiToKoTo(messageBuilder);
+        messageBuilder.add("\n毒鸡汤：");
+        messageBuilder.add(BeanUtil.getSoul());
+        messageBuilder.add("\n");
+
 
         messageBuilder.add("\n本条说说驱动：https://github.com/ColorfulGhost/QzoneHuhuRobot");
 

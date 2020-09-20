@@ -2,14 +2,15 @@ package cc.vimc.mcbot.bot.plugins;
 
 import cc.moecraft.icq.command.CommandProperties;
 import cc.moecraft.icq.command.interfaces.EverywhereCommand;
-import cc.moecraft.icq.event.events.message.EventGroupMessage;
 import cc.moecraft.icq.event.events.message.EventMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentImage;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.pojo.SeTuResponseModel;
+import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.BotUtils;
+import cc.vimc.mcbot.utils.RedisUtil;
 import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpStatus;
@@ -30,13 +31,13 @@ public class SeTu implements EverywhereCommand {
         MessageBuilder messageBuilder = new MessageBuilder();
         String keyword = BotUtils.removeCommandPrefix(command, event.getMessage());
 
-        Long groupId = ((EventGroupMessage) event).getGroupId();
-        //藤原拓海豆腐店
-        if (groupId != 199324349) {
-            messageBuilder.add("咱被弟弟举报了OAO！涩图功能不对外公开，只可以在涩图群使用w");
-            return messageBuilder.toString();
-        }
-        SeTuResponseModel seTuResponseModel = seTuAPI(keyword, 2, 1);
+//        Long groupId = ((EventGroupMessage) event).getGroupId();
+//        //藤原拓海豆腐店
+//        if (groupId != 199324349) {
+//            messageBuilder.add("咱被弟弟举报了OAO！涩图功能不对外公开，只可以在涩图群使用w");
+//            return messageBuilder.toString();
+//        }
+        SeTuResponseModel seTuResponseModel = seTuApi(keyword, 2, 1);
 
         if (seTuResponseModel == null) {
             messageBuilder.add("调用色图服务出错");
@@ -59,7 +60,6 @@ public class SeTu implements EverywhereCommand {
                 messageBuilder.add("内部错误，请向 i@loli.best 反馈");
             }
             return messageBuilder.toString();
-
         }
         SeTuResponseModel.Setu firstSeTu = seTuResponseModel.getData().stream().findFirst().get();
         if (firstSeTu.isR18()) {
@@ -83,7 +83,7 @@ public class SeTu implements EverywhereCommand {
      * @param num     一次返回的结果数量，范围为1到10，不提供 APIKEY 时固定为1；在指定关键字的情况下，结果数量可能会不足指定的数量
      * @return
      */
-    public SeTuResponseModel seTuAPI(String keyword, int r18, int num) {
+    public SeTuResponseModel seTuApi(String keyword, int r18, int num) {
         Map<String, Object> requestData = new HashMap<>();
         List<String> seTuAPIKeys = Arrays.asList(SpringContextUtil.getEnvProperty("setu.api.key").split(","));
         while (true) {
@@ -111,6 +111,15 @@ public class SeTu implements EverywhereCommand {
             log.error("调用色图服务出错", e);
             return null;
         }
+
+        BeanUtil.redisUtil.incrBy(RedisUtil.BOT_SETU_COUNT, 1);
+
+        Calendar instance = Calendar.getInstance();
+        instance.set(Calendar.HOUR_OF_DAY, 23);
+        instance.set(Calendar.MINUTE, 59);
+        instance.set(Calendar.SECOND, 58);
+        BeanUtil.redisUtil.expireAt(RedisUtil.BOT_SETU_COUNT, instance.getTime());
+
 
         return seTuResponseModel;
     }

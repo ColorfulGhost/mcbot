@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
 
     public static final String BOT_IMAGE_MD5 = "bot:image:md5:";
+    public static final String BOT_SETU_COUNT = "bot:setu:count";
 
     private StringRedisTemplate redisTemplate;
 
