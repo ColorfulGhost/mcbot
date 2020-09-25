@@ -41,9 +41,9 @@ public class MessageListener extends IcqListener {
     @EventHandler
     public void eventNoticeGroupMemberApprove(EventNoticeGroupMemberApprove event) {
         //阳炎科技
-        if (320510479 == event.getGroupId()) {
-            event.getGroupMethods().respond("欢迎新成员~查看置顶群公告，看看如何申请白名单吧~");
-        }
+//        if (320510479 == event.getGroupId()) {
+//            event.getGroupMethods().respond("欢迎新成员~查看置顶群公告，看看如何申请白名单吧~");
+//        }
     }
 
     public static String bytesToHexString(byte[] src) {
@@ -70,33 +70,33 @@ public class MessageListener extends IcqListener {
             String message = event.getMessage();
 
 
-            if (message.contains("机器人")) {
-                httpApi.sendGroupMsg(groupId, message);
+//            if (message.contains("机器人")) {
+//                httpApi.sendGroupMsg(groupId, message);
 
-            } else {
+//            } else {
                 //复读状态里有没有这个组
-                if (repeater.containsKey(groupId) && repeater.get(groupId).equals(message)) {
-                    //拿取上次保存的message和本次message对比 和之前有没有复读过
-                    if (readyRepeaterStatus.getOrDefault(groupId, false)) {
-                        httpApi.sendGroupMsg(groupId, message);
-                        //关闭复读状态
-                        readyRepeaterStatus.put(groupId, false);
-                        return;
-                    }
-                } else {
-                    //如果不是复读 则缓存并且随时准备复读
-                    repeater.put(groupId, message);
-                    readyRepeaterStatus.put(groupId, true);
-
-                }
+//                if (repeater.containsKey(groupId) && repeater.get(groupId).equals(message)) {
+//                    //拿取上次保存的message和本次message对比 和之前有没有复读过
+//                    if (readyRepeaterStatus.getOrDefault(groupId, false)) {
+//                        httpApi.sendGroupMsg(groupId, message);
+//                        //关闭复读状态
+//                        readyRepeaterStatus.put(groupId, false);
+//                        return;
+//                    }
+//                } else {
+//                    //如果不是复读 则缓存并且随时准备复读
+//                    repeater.put(groupId, message);
+//                    readyRepeaterStatus.put(groupId, true);
+//
+//                }
                 for (String sexKeyword : BotUtils.LSB_KEYWORD) {
                     if (message.contains(sexKeyword)) {
-                        SeTuResponseModel.Setu setu = new SeTu().seTuApi("", 2, 1).getData().get(0);
+                        SeTuResponseModel.Setu setu = new SeTu().seTuApi("", 2, 1,event).getData().get(0);
                         httpApi.sendGroupMsg(groupId, new MessageBuilder().add(new ComponentImage(setu.getUrl())).toString());
                         return;
                     }
                 }
-            }
+//            }
 
 
             RegxUtils cqCodeImageRegx = new RegxUtils(message);
@@ -163,7 +163,7 @@ public class MessageListener extends IcqListener {
                 for (String keyword : BotUtils.LSB_KEYWORD) {
                     for (String content : contents) {
                         if (content.contains(keyword)) {
-                            SeTuResponseModel.Setu setu = new SeTu().seTuApi("", 2, 1).getData().get(0);
+                            SeTuResponseModel.Setu setu = new SeTu().seTuApi("", 2, 1,event).getData().get(0);
                             httpApi.sendGroupMsg(groupId, new MessageBuilder().add(new ComponentImage(setu.getUrl())).toString());
                             return;
                         }

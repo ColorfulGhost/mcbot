@@ -19,8 +19,9 @@ public class BotUtils {
 
     private static IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
 
+    public static final List<String> LSB_KEYWORD = Arrays.asList("开车", "涩图", "色图", "营养", "开冲", "够色", "摩多", "兴奋", "黄图");
 
-    public static final List<String> LSB_KEYWORD = Arrays.asList("开车", "涩图", "色图", "营养", "开冲","够色","摩多","兴奋","黄图");
+
 
     /**
      * @param
@@ -66,23 +67,19 @@ public class BotUtils {
         return content.replace("/" + command, "").trim();
     }
 
-    @Deprecated
-    public static void delMassageForMs(IcqHttpApi icqHttpApi, Long messageId, int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            log.error(e);
-        }
-        icqHttpApi.deleteMsg(messageId);
+    public static void delMassage(IcqHttpApi icqHttpApi, Long messageId) {
+        icqHttpApi.deleteMsg(messageId + 1);
     }
+
 
     /**
      * @param
      * @return cc.moecraft.icq.command.interfaces.IcqCommand[]
-     * @Description 实例化Plugins下所有插件
+     * @Description 实例化Plugins下所有插件 (已经写入框架中
      * @author ColorfulGhost
      * @date 2020/9/6
      */
+    @Deprecated
     public static IcqCommand[] loadAllPlugins() {
 
         Set<Class<?>> scanClasses = ClassUtil.scanPackage("");

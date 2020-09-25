@@ -8,12 +8,20 @@ import cc.vimc.mcbot.mapper.UserMapper;
 import cc.vimc.mcbot.pojo.CoolQUser;
 import cc.vimc.mcbot.pojo.FlexBleLoginUser;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class BeanUtil {
     public static CoolQUserMapper coolQUserMapper = SpringContextUtil.getBean(CoolQUserMapper.class);
     public static  UserMapper userMapper = SpringContextUtil.getBean(UserMapper.class);
     public static CoolQSoulMapper coolQSoulMapper = SpringContextUtil.getBean(CoolQSoulMapper.class);
     public static CoolQStatusMapper coolQStatusMapper = SpringContextUtil.getBean(CoolQStatusMapper.class);
     public static RedisUtil redisUtil = SpringContextUtil.getBean(RedisUtil.class);
+    public static Long setuQQGroup = Long.valueOf( SpringContextUtil.getEnvProperty("setu.qq.group"));
+    public static List<String> seTuAPIKeys = Arrays.asList(SpringContextUtil.getEnvProperty("setu.api.key").split(","));
+    public static String apiKey = SpringContextUtil.getEnvProperty("MCSM.api.admin.key");
+    public static  String url = SpringContextUtil.getEnvProperty("MCSM.api.url");
+
 
     /**
      * @Description 验证是否绑定QQ

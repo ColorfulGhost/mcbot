@@ -2,6 +2,7 @@ package cc.vimc.mcbot.bot.plugins;
 
 import cc.moecraft.icq.command.CommandProperties;
 import cc.moecraft.icq.command.interfaces.EverywhereCommand;
+import cc.moecraft.icq.event.events.message.EventGroupMessage;
 import cc.moecraft.icq.event.events.message.EventMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentImage;
@@ -11,7 +12,6 @@ import cc.vimc.mcbot.pojo.SeTuResponseModel;
 import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.RedisUtil;
-import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpStatus;
 import cn.hutool.http.HttpUtil;
@@ -31,13 +31,8 @@ public class SeTu implements EverywhereCommand {
         MessageBuilder messageBuilder = new MessageBuilder();
         String keyword = BotUtils.removeCommandPrefix(command, event.getMessage());
 
-//        Long groupId = ((EventGroupMessage) event).getGroupId();
-//        //藤原拓海豆腐店
-//        if (groupId != 199324349) {
-//            messageBuilder.add("咱被弟弟举报了OAO！涩图功能不对外公开，只可以在涩图群使用w");
-//            return messageBuilder.toString();
-//        }
-        SeTuResponseModel seTuResponseModel = seTuApi(keyword, 2, 1);
+
+        SeTuResponseModel seTuResponseModel = seTuApi(keyword, 2, 1, event);
 
         if (seTuResponseModel == null) {
             messageBuilder.add("调用色图服务出错");
@@ -62,11 +57,6 @@ public class SeTu implements EverywhereCommand {
             return messageBuilder.toString();
         }
         SeTuResponseModel.Setu firstSeTu = seTuResponseModel.getData().stream().findFirst().get();
-        if (firstSeTu.isR18()) {
-            ThreadUtil.execAsync(() -> {
-                BotUtils.delMassageForMs(event.getHttpApi(), event.getMessageId(), 20000);
-            });
-        }
         messageBuilder.add(new ComponentImage(firstSeTu.getUrl()));
         messageBuilder.add("作品名称：").add(firstSeTu.getTitle()).add("\n画师：").add(firstSeTu.getAuthor());
 
@@ -83,12 +73,16 @@ public class SeTu implements EverywhereCommand {
      * @param num     一次返回的结果数量，范围为1到10，不提供 APIKEY 时固定为1；在指定关键字的情况下，结果数量可能会不足指定的数量
      * @return
      */
+
     public SeTuResponseModel seTuApi(String keyword, int r18, int num) {
+        return seTuApi(keyword, r18, num, null);
+    }
+
+    public SeTuResponseModel seTuApi(String keyword, int r18, int num, EventMessage event) {
         Map<String, Object> requestData = new HashMap<>();
-        List<String> seTuAPIKeys = Arrays.asList(SpringContextUtil.getEnvProperty("setu.api.key").split(","));
         while (true) {
-            if (tmpNextKeyIndex < seTuAPIKeys.size()) {
-                requestData.put("apikey", seTuAPIKeys.get(tmpNextKeyIndex));
+            if (tmpNextKeyIndex < BeanUtil.seTuAPIKeys.size()) {
+                requestData.put("apikey", BeanUtil.seTuAPIKeys.get(tmpNextKeyIndex));
                 tmpNextKeyIndex++;
                 break;
             } else {
@@ -110,6 +104,18 @@ public class SeTu implements EverywhereCommand {
         } catch (Exception e) {
             log.error("调用色图服务出错", e);
             return null;
+        }
+        Optional<SeTuResponseModel.Setu> first = seTuResponseModel.getData().stream().findFirst();
+        if (first.isPresent()) {
+            ThreadUtil.execAsync(() -> {
+                Long groupId = ((EventGroupMessage) event).getGroupId();
+                //藤原拓海豆腐店
+                if (groupId != null && !groupId.equals(BeanUtil.setuQQGroup)) {
+                    ThreadUtil.sleep(110000);
+                    BotUtils.delMassage(event.getHttpApi(), event.getMessageId());
+                    event.getHttpApi().sendGroupMsg(groupId, "免撤回QQ群：" + BeanUtil.setuQQGroup +  "图片地址：\n" + first.get().getUrl());
+                }
+            });
         }
 
         BeanUtil.redisUtil.incrBy(RedisUtil.BOT_SETU_COUNT, 1);

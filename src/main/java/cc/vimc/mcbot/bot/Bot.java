@@ -26,7 +26,7 @@ public class Bot {
     @PostConstruct
     public void initBot() {
         PicqConfig config = new PicqConfig(postPort);
-        config.setApiAsync(true);
+//        config.setApiAsync(true);
         config.setNoVerify(true);
         config.setDebug(true);
 

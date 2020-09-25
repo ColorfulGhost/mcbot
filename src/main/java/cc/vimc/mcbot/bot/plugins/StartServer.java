@@ -9,7 +9,6 @@ import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.enums.ConstantMessages;
 import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.BotUtils;
-import cc.vimc.mcbot.utils.SpringContextUtil;
 import cn.hutool.http.HttpStatus;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
@@ -30,13 +29,12 @@ public class StartServer implements EverywhereCommand {
             messageBuilder.add(ConstantMessages.PLAYER_NOT_EXIST.getMessage());
             return messageBuilder.toString();
         }
-        String apiKey = SpringContextUtil.getEnvProperty("MCSM.api.admin.key");
-        String url = SpringContextUtil.getEnvProperty("MCSM.api.url");
+
         String serverName = BotUtils.removeCommandPrefix(command, event.getMessage());
 
         String data;
         try {
-            data = HttpUtil.get(url + "start_server/" + serverName + "?apikey=" + apiKey);
+            data = HttpUtil.get(BeanUtil.url + "start_server/" + serverName + "?apikey=" + BeanUtil.apiKey);
         } catch (Exception e) {
             messageBuilder.add(e.getMessage());
             return messageBuilder.toString();
