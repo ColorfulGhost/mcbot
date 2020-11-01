@@ -1,27 +1,18 @@
-package cc.vimc.mcbot.api;
+package cc.vimc.mcbot.controller;
 
 import cc.vimc.mcbot.mapper.CoolQUserMapper;
-import cc.vimc.mcbot.mapper.UserMapper;
 import cc.vimc.mcbot.pojo.CoolQUser;
-import cc.vimc.mcbot.pojo.FlexBleLoginUser;
 import cn.hutool.core.codec.Base64;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileReader;
-import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.http.HttpUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
 import com.alibaba.fastjson.util.IOUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.MediaType;
-
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.File;
 
 

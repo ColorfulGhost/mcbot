@@ -24,6 +24,6 @@ public class LSB implements EverywhereCommand {
 
     @Override
     public CommandProperties properties() {
-        return new CommandProperties(Commands.LSB.getCommand());
+        return new CommandProperties(Commands.LSP.getCommand());
     }
 }

@@ -29,12 +29,13 @@ public class Bot {
 //        config.setApiAsync(true);
         config.setNoVerify(true);
         config.setDebug(true);
-
+        config.setLogPath("");
+        config.setUseAsyncCommands(true);
 
         bot = new PicqBotX(config);
 
-//        bot.addAccount(botName, postURL, cqPort);
-        bot.addAccount(botName, postURL, cqPortTest);
+        bot.addAccount(botName, postURL, cqPort);
+//        bot.addAccount(botName, postURL, cqPortTest);
         bot.enableCommandManager("/");
         bot.getEventManager().registerListeners(new MessageListener());
         bot.getCommandManager().registerAllCommands("cc.vimc.mcbot.bot.plugins");

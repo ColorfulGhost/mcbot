@@ -24,6 +24,6 @@ public class Help implements EverywhereCommand {
 
     @Override
     public CommandProperties properties() {
-        return new CommandProperties(Commands.HELP.getCommand());
+        return new CommandProperties("help");
     }
 }

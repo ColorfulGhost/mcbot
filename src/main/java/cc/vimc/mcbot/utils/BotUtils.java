@@ -21,6 +21,8 @@ public class BotUtils {
 
     public static final List<String> LSB_KEYWORD = Arrays.asList("开车", "涩图", "色图", "营养", "开冲", "够色", "摩多", "兴奋", "黄图");
 
+    public static final List<Long> ADMINS = Arrays.asList(815666528L);
+
 
 
     /**
@@ -68,7 +70,7 @@ public class BotUtils {
     }
 
     public static void delMassage(IcqHttpApi icqHttpApi, Long messageId) {
-        icqHttpApi.deleteMsg(messageId + 1);
+        icqHttpApi.deleteMsg(messageId+1);
     }
 
 

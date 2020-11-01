@@ -1,6 +1,7 @@
 package cc.vimc.mcbot.controller;
 
 
+import cc.vimc.mcbot.api.MqttGateway;
 import cc.vimc.mcbot.pojo.BangumiList;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileUtil;
@@ -8,6 +9,7 @@ import cn.hutool.core.lang.TypeReference;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,15 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.crypto.Cipher;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 @Log4j2
-@RestController("/test")
-public class Test {
+@RestController
+class Test {
     public static final byte[] h = new byte[]{
-            65, 80, 77, 80, 89, 68, 90, 70, 89, 68,
+            65, 80, 77, 80, 89, 68, 90 , 70, 89, 68,
             90, 70, 65, 80, 77, 80, 65, 80, 77, 80,
             89, 68, 90, 70};
 
+    @Autowired
+    private MqttGateway mqttGateway;
+
+    @RequestMapping("/sendMqtt")
+    public String sendMqtt(String  sendData){
+        mqttGateway.sendToMqtt(sendData,"");
+        return "OK";
+    }
 
     @RequestMapping("/2")
     public void test2(){
@@ -157,6 +169,17 @@ public class Test {
     }
 
     private static int a(byte paramByte) {
+        Callable<String> callable = () -> {
+        return null;
+        };
+        FutureTask<String> stringFutureTask = new FutureTask<>(callable);
+
+        Thread thread = new Thread(stringFutureTask);
+        thread.start();
+//        ThreadUtil.createThreadFactoryBuilder()
+//        ThreadUtil.
+
+
         if (paramByte >= 48 && paramByte < 58)
             return paramByte - 48;
         byte b1 = 65;

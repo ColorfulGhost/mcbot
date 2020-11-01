@@ -4,7 +4,6 @@ package cc.vimc.mcbot.utils;
 import cc.moecraft.icq.sender.IcqHttpApi;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentAt;
-import cc.moecraft.icq.sender.message.components.ComponentFace;
 import cc.moecraft.icq.sender.message.components.ComponentImage;
 import cc.vimc.mcbot.bot.Bot;
 import cc.vimc.mcbot.bot.plugins.Hitokoto;
@@ -54,7 +53,7 @@ public class ScheduledSendMessage {
     private Long minecraftQQGroup;
 
 
-    private IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
+    private final static IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
 
     private String lastQuarterBangumi;
 
@@ -109,7 +108,6 @@ public class ScheduledSendMessage {
         messageBuilder.add(new ComponentImage(setu.getUrl()));
         return false;
     }
-
 
 
     public void sendBangumiUpdateTime() {
@@ -186,8 +184,9 @@ public class ScheduledSendMessage {
 
 
     }
+
     @Scheduled(cron = "00 58 23 * * ?")
-    public void sendQQZoneMessage(){
+    public void sendQQZoneMessage() {
 
         MessageBuilder messageBuilder = new MessageBuilder();
 
@@ -203,9 +202,9 @@ public class ScheduledSendMessage {
 
         messageBuilder.add("\n本条说说驱动：https://github.com/ColorfulGhost/QzoneHuhuRobot");
 
-        Map<String,Object> param = new HashMap<>();
-        param.put("msg",messageBuilder.toString());
-        HttpUtil.post("http://192.168.1.220:89/sendMsgToQQZone",param);
+        Map<String, Object> param = new HashMap<>();
+        param.put("msg", messageBuilder.toString());
+        HttpUtil.post("http://192.168.1.220:89/sendMsgToQQZone", param);
     }
 
     @Scheduled(cron = "59 59 23 * * ?")
@@ -254,10 +253,6 @@ public class ScheduledSendMessage {
         }
 
         ThreadUtil.sleep(1000);
-        //毒鸡汤 到点了！
-        for (Long QQGroup : BotUtils.getAllGroup()) {
-            icqHttpApi.sendGroupMsg(QQGroup, new MessageBuilder().add(new ComponentFace(3)).add("到点了\n").toString());
-        }
         icqHttpApi.sendGroupMsg(minecraftQQGroup, retMessage.toString());
     }
 

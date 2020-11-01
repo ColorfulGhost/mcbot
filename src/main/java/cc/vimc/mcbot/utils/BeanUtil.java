@@ -1,6 +1,7 @@
 package cc.vimc.mcbot.utils;
 
 
+import cc.vimc.mcbot.api.MqttGateway;
 import cc.vimc.mcbot.mapper.CoolQSoulMapper;
 import cc.vimc.mcbot.mapper.CoolQStatusMapper;
 import cc.vimc.mcbot.mapper.CoolQUserMapper;
@@ -21,6 +22,8 @@ public class BeanUtil {
     public static List<String> seTuAPIKeys = Arrays.asList(SpringContextUtil.getEnvProperty("setu.api.key").split(","));
     public static String apiKey = SpringContextUtil.getEnvProperty("MCSM.api.admin.key");
     public static  String url = SpringContextUtil.getEnvProperty("MCSM.api.url");
+
+    public static MqttGateway mqttGateway = SpringContextUtil.getBean(MqttGateway.class);
 
 
     /**
