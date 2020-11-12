@@ -106,17 +106,15 @@ public class SeTu implements EverywhereCommand {
             return null;
         }
         Optional<SeTuResponseModel.Setu> first = seTuResponseModel.getData().stream().findFirst();
-        if (first.isPresent()) {
-            ThreadUtil.execAsync(() -> {
-                Long groupId = ((EventGroupMessage) event).getGroupId();
-                //藤原拓海豆腐店
-                if (groupId != null && !groupId.equals(BeanUtil.setuQQGroup)) {
-                    ThreadUtil.sleep(110000);
-                    BotUtils.delMassage(event.getHttpApi(), event.getMessageId());
-                    event.getHttpApi().sendGroupMsg(groupId, "免撤回QQ群：" + BeanUtil.setuQQGroup +  "图片地址：\n" + first.get().getUrl());
-                }
-            });
-        }
+        first.ifPresent(setu -> ThreadUtil.execAsync(() -> {
+            Long groupId = ((EventGroupMessage) event).getGroupId();
+            //藤原拓海豆腐店
+            if (groupId != null && !groupId.equals(BeanUtil.setuQQGroup)) {
+                ThreadUtil.sleep(110000);
+                BotUtils.delMassage(event.getHttpApi(), event.getMessageId());
+//                event.getHttpApi().sendGroupMsg(groupId, "免撤回QQ群：" + BeanUtil.setuQQGroup + "图片地址：\n" + setu.getUrl());
+            }
+        }));
 
         BeanUtil.redisUtil.incrBy(RedisUtil.BOT_SETU_COUNT, 1);
 

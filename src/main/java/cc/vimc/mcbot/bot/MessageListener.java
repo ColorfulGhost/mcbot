@@ -23,6 +23,7 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
@@ -63,13 +64,11 @@ public class MessageListener extends IcqListener {
     }
 
     @EventHandler
+    @Async
     public void eventGroupMessage(EventGroupMessage event) {
-        ThreadUtil.execAsync(() -> {
             IcqHttpApi httpApi = event.getBotAccount().getHttpApi();
             Long groupId = event.getGroupId();
             String message = event.getMessage();
-
-
 //            if (message.contains("机器人")) {
 //                httpApi.sendGroupMsg(groupId, message);
 
@@ -170,10 +169,5 @@ public class MessageListener extends IcqListener {
                     }
                 }
             }
-
-
-        });
-
-
     }
 }
