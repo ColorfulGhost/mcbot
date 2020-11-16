@@ -5,8 +5,12 @@ import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author Ghost
+ */
 @Repository
 public interface CoolQUserMapper {
+
 
     @Insert({"INSERT INTO coolq_user(`qq`,`flexblelogin_id`,`uuid`,`user_name`)values (#{qq},#{flexbleloginId},#{uuid},#{userName})"})
     int insertUser(@Param("qq") String qq, @Param("flexbleloginId") int flexbleloginId, @Param("uuid") String uuid, @Param("userName") String userName);
@@ -25,6 +29,9 @@ public interface CoolQUserMapper {
             @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.TIMESTAMP)
     })
     CoolQUser selectUserExist(String userName);
+
+
+    int insertUser(@Param("coolq_user") CoolQUser coolQUser);
 
     @Select("SELECT * FROM coolq_user WHERE qq=#{qq}")
     @ResultMap(value = "coolQUser")

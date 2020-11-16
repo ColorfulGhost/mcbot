@@ -7,6 +7,7 @@ import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.pojo.*;
 import cc.vimc.mcbot.enums.Commands;
+import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.BotUtils;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.http.HttpUtil;
@@ -35,6 +36,8 @@ public class YuanShen implements EverywhereCommand {
      */
     private static final String STATUS = "status";
 
+
+
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
         String preCommand = BotUtils.removeCommandPrefix(Commands.YUANSHEN.getCommand(), event.getMessage());
@@ -45,6 +48,14 @@ public class YuanShen implements EverywhereCommand {
         }
         switch (preCommandList.get(0)) {
             case BIND:
+                if (BeanUtil.verifyNoBindQQ(sender.getId())){
+                    CoolQUser coolQUser = new CoolQUser();
+                    coolQUser.setQq(sender.getId());
+                    coolQUser.setYuanShenUID(preCommandList.get(1));
+                    BeanUtil.coolQUserMapper.insertUser(coolQUser);
+                }else {
+
+                }
                 break;
             case SP:
                 List<String> spList = Arrays.asList(preCommandList.get(1).split("-"));
@@ -105,7 +116,7 @@ public class YuanShen implements EverywhereCommand {
 
         List<AvatarsItem> avatars = yuanShenUserInfo.getAvatars();
         for (AvatarsItem avatar : avatars) {
-            avatarsResult.append("琴 ").append(avatar.getRarity()).append("⭐").append("|")
+            avatarsResult.append(avatar.getName()).append(avatar.getRarity()).append("⭐").append("|")
                     .append("等级：").append(avatar.getLevel())
                     .append("好感度：").append(avatar.getFetter()).append("\n");
         }
