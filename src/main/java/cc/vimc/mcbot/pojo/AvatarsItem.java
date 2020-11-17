@@ -25,28 +25,56 @@ public class AvatarsItem{
 	@JSONField(name="rarity")
 	private int rarity;
 
+	public void setImage(String image){
+		this.image = image;
+	}
+
 	public String getImage(){
 		return image;
+	}
+
+	public void setLevel(int level){
+		this.level = level;
 	}
 
 	public int getLevel(){
 		return level;
 	}
 
+	public void setName(String name){
+		this.name = name;
+	}
+
 	public String getName(){
 		return name;
+	}
+
+	public void setFetter(int fetter){
+		this.fetter = fetter;
 	}
 
 	public int getFetter(){
 		return fetter;
 	}
 
+	public void setId(int id){
+		this.id = id;
+	}
+
 	public int getId(){
 		return id;
 	}
 
+	public void setElement(String element){
+		this.element = element;
+	}
+
 	public String getElement(){
 		return element;
+	}
+
+	public void setRarity(int rarity){
+		this.rarity = rarity;
 	}
 
 	public int getRarity(){

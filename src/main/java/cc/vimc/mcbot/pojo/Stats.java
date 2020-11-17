@@ -43,52 +43,104 @@ public class Stats{
 	@JSONField(name="achievement_number")
 	private int achievementNumber;
 
+	public void setDomainNumber(int domainNumber){
+		this.domainNumber = domainNumber;
+	}
+
 	public int getDomainNumber(){
 		return domainNumber;
+	}
+
+	public void setExquisiteChestNumber(int exquisiteChestNumber){
+		this.exquisiteChestNumber = exquisiteChestNumber;
 	}
 
 	public int getExquisiteChestNumber(){
 		return exquisiteChestNumber;
 	}
 
+	public void setGeoculusNumber(int geoculusNumber){
+		this.geoculusNumber = geoculusNumber;
+	}
+
 	public int getGeoculusNumber(){
 		return geoculusNumber;
+	}
+
+	public void setSpiralAbyss(String spiralAbyss){
+		this.spiralAbyss = spiralAbyss;
 	}
 
 	public String getSpiralAbyss(){
 		return spiralAbyss;
 	}
 
+	public void setLuxuriousChestNumber(int luxuriousChestNumber){
+		this.luxuriousChestNumber = luxuriousChestNumber;
+	}
+
 	public int getLuxuriousChestNumber(){
 		return luxuriousChestNumber;
+	}
+
+	public void setAnemoculusNumber(int anemoculusNumber){
+		this.anemoculusNumber = anemoculusNumber;
 	}
 
 	public int getAnemoculusNumber(){
 		return anemoculusNumber;
 	}
 
+	public void setPreciousChestNumber(int preciousChestNumber){
+		this.preciousChestNumber = preciousChestNumber;
+	}
+
 	public int getPreciousChestNumber(){
 		return preciousChestNumber;
+	}
+
+	public void setWayPointNumber(int wayPointNumber){
+		this.wayPointNumber = wayPointNumber;
 	}
 
 	public int getWayPointNumber(){
 		return wayPointNumber;
 	}
 
+	public void setWinRate(int winRate){
+		this.winRate = winRate;
+	}
+
 	public int getWinRate(){
 		return winRate;
+	}
+
+	public void setAvatarNumber(int avatarNumber){
+		this.avatarNumber = avatarNumber;
 	}
 
 	public int getAvatarNumber(){
 		return avatarNumber;
 	}
 
+	public void setCommonChestNumber(int commonChestNumber){
+		this.commonChestNumber = commonChestNumber;
+	}
+
 	public int getCommonChestNumber(){
 		return commonChestNumber;
 	}
 
+	public void setActiveDayNumber(int activeDayNumber){
+		this.activeDayNumber = activeDayNumber;
+	}
+
 	public int getActiveDayNumber(){
 		return activeDayNumber;
+	}
+
+	public void setAchievementNumber(int achievementNumber){
+		this.achievementNumber = achievementNumber;
 	}
 
 	public int getAchievementNumber(){

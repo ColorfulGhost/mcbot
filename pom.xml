@@ -23,6 +23,24 @@
         <java.version>8</java.version>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <project.active>dev</project.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <project.active>prod</project.active>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <!--mqtt依赖-->
         <dependency>

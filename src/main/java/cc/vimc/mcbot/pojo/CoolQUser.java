@@ -12,5 +12,5 @@ public class CoolQUser {
     private String skin;
     private Date createTime;
     private String uuid;
-    private String yuanShenUID;
+    private String yuanshenUid;
 }

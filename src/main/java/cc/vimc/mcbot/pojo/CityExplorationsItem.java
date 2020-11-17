@@ -19,20 +19,40 @@ public class CityExplorationsItem{
 	@JSONField(name="id")
 	private int id;
 
+	public void setExplorationPercentage(int explorationPercentage){
+		this.explorationPercentage = explorationPercentage;
+	}
+
 	public int getExplorationPercentage(){
 		return explorationPercentage;
+	}
+
+	public void setLevel(int level){
+		this.level = level;
 	}
 
 	public int getLevel(){
 		return level;
 	}
 
+	public void setIcon(String icon){
+		this.icon = icon;
+	}
+
 	public String getIcon(){
 		return icon;
 	}
 
+	public void setName(String name){
+		this.name = name;
+	}
+
 	public String getName(){
 		return name;
+	}
+
+	public void setId(int id){
+		this.id = id;
 	}
 
 	public int getId(){

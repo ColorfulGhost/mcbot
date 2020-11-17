@@ -20,7 +20,7 @@ public class EditPassword implements PrivateCommand {
     @Override
     public String privateMessage(EventPrivateMessage event, User sender, String command, ArrayList<String> args) {
         MessageBuilder messageBuilder = new MessageBuilder();
-        CoolQUser coolQUser = BeanUtil.coolQUserMapper.selectQQExist(sender.getId());
+        CoolQUser coolQUser = BeanUtil.coolQUserMapper.selectForQQ(sender.getId());
         if (coolQUser == null) {
             messageBuilder.add(ConstantMessages.PLAYER_NOT_EXIST);
             return messageBuilder.toString();

@@ -6,6 +6,7 @@ import cc.moecraft.icq.event.events.message.EventMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
+import cc.vimc.mcbot.enums.ConstantMessages;
 import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.BotUtils;
 import cn.hutool.core.collection.CollectionUtil;
@@ -22,6 +23,9 @@ public class IoT implements EverywhereCommand {
 
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
+        if (!BotUtils.ADMINS.contains(sender.getId())) {
+            return ConstantMessages.PERMISSION_NOT_FUNOD.getMessage();
+        }
         String preCommand = BotUtils.removeCommandPrefix(Commands.IOT.getCommand(), event.getMessage());
         List<String> preCommandList = Arrays.asList(preCommand.split(" "));
         MessageBuilder messageBuilder = new MessageBuilder();

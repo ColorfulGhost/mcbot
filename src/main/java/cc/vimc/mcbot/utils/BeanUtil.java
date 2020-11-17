@@ -34,7 +34,7 @@ public class BeanUtil {
      * @date 2020/9/5
      */
     public static boolean verifyNoBindQQ(Long qq) {
-        CoolQUser coolQUser = coolQUserMapper.selectQQExist(qq);
+        CoolQUser coolQUser = coolQUserMapper.selectForQQ(qq);
         return coolQUser == null;
 
     }

@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Log4j2
 public class BotUtils {
 
-    private static IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
 
     public static final List<String> LSB_KEYWORD = Arrays.asList("开车", "涩图", "色图", "营养", "开冲", "够色", "摩多", "兴奋", "黄图");
 
@@ -33,7 +32,7 @@ public class BotUtils {
      * @date 2020/9/6
      */
     public static List<Long> getAllGroup() {
-
+         IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
         ReturnListData<RGroup> groupList = icqHttpApi.getGroupList();
         if (groupList == null || CollectionUtil.isEmpty(groupList.getData())) {
             return Collections.emptyList();
@@ -70,7 +69,7 @@ public class BotUtils {
     }
 
     public static void delMassage(IcqHttpApi icqHttpApi, Long messageId) {
-        icqHttpApi.deleteMsg(messageId+1);
+        icqHttpApi.deleteMsg(messageId);
     }
 
 

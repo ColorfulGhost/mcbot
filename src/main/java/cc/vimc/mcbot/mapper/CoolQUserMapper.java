@@ -19,6 +19,9 @@ public interface CoolQUserMapper {
     @Update({"UPDATE `minecraft`.`coolq_user` SET `skin`=#{skin} WHERE  `user_name`=#{userName};"})
     void updateSkin(@Param("skin") String skin, @Param("userName") String userName);
 
+    @Update({"UPDATE `minecraft`.`coolq_user` SET `yuanshen_uid`=#{yuanShenUID} WHERE  `qq`=#{qq};"})
+    void updateYuanShenUID(@Param("yuanShenUID") String yuanShenUID, @Param("qq") Long qq);
+
     @Select("SELECT * FROM coolq_user WHERE user_name=#{userName}")
     @Results(
             id = "coolQUser", value = {
@@ -26,14 +29,15 @@ public interface CoolQUserMapper {
             @Result(column = "flexblelogin_id", property = "flexbleloginId", jdbcType = JdbcType.INTEGER),
             @Result(column = "user_name", property = "userName", jdbcType = JdbcType.VARCHAR),
             @Result(column = "uuid", property = "uuid", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "yuanshen_uid", property = "yuanshenUid", jdbcType = JdbcType.VARCHAR),
             @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.TIMESTAMP)
     })
     CoolQUser selectUserExist(String userName);
 
-
-    int insertUser(@Param("coolq_user") CoolQUser coolQUser);
+    @Insert({"INSERT INTO coolq_user(`qq`,`yuanshen_uid`)values (#{qq},#{yuanshenUid})"})
+    int insertYuanshenUser(@Param("qq") Long qq, @Param("yuanshenUid") String yuanshenUid);
 
     @Select("SELECT * FROM coolq_user WHERE qq=#{qq}")
     @ResultMap(value = "coolQUser")
-    CoolQUser selectQQExist(Long qq);
+    CoolQUser selectForQQ(Long qq);
 }

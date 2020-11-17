@@ -2,6 +2,7 @@ package cc.vimc.mcbot.bot;
 
 import cc.moecraft.icq.PicqBotX;
 import cc.moecraft.icq.PicqConfig;
+import cc.vimc.mcbot.bot.plugins.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,8 +13,6 @@ public class Bot {
 
     @Value("${coolq.port}")
     private int cqPort;
-    @Value("${coolq.port.test}")
-    private int cqPortTest;
     @Value("${coolq.bot.name}")
     private String botName;
     @Value("${coolq.post.port}")
@@ -26,7 +25,7 @@ public class Bot {
     @PostConstruct
     public void initBot() {
         PicqConfig config = new PicqConfig(postPort);
-//        config.setApiAsync(true);
+        config.setApiAsync(true);
         config.setNoVerify(true);
         config.setDebug(true);
         config.setLogPath("");
@@ -35,10 +34,24 @@ public class Bot {
         bot = new PicqBotX(config);
 
         bot.addAccount(botName, postURL, cqPort);
-//        bot.addAccount(botName, postURL, cqPortTest);
         bot.enableCommandManager("/");
         bot.getEventManager().registerListeners(new MessageListener());
-        bot.getCommandManager().registerAllCommands("cc.vimc.mcbot.bot.plugins");
+        bot.getCommandManager().registerCommands(
+                new Anime(),
+                new Bangumi(),
+                new EditPassword(),
+                new Help(),
+                new Hitokoto(),
+                new IoT(),
+                new ListPlayer(),
+                new LSB(),
+//                new MiBand(),
+                new SendRconMessage(),
+                new SeTu(),
+                new StartServer(),
+                new YuanShen(),
+                new AntiMotivationalQuotes());
+//        bot.getCommandManager().registerAllCommands("cc.vimc.mcbot.bot.plugins");
         bot.startBot();
     }
 

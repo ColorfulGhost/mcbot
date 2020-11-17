@@ -6,6 +6,7 @@ import cc.moecraft.icq.event.events.message.EventMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
+import cc.vimc.mcbot.enums.ConstantMessages;
 import cc.vimc.mcbot.rcon.RconCommand;
 import cc.vimc.mcbot.utils.BotUtils;
 
@@ -18,7 +19,7 @@ public class SendRconMessage implements EverywhereCommand {
         if (BotUtils.ADMINS.contains(sender.getId())) {
             messageBuilder.add(RconCommand.send(BotUtils.removeCommandPrefix(command, event.getMessage())));
         } else {
-            messageBuilder.add("您不是管理员，无权执行命令");
+            messageBuilder.add(ConstantMessages.PERMISSION_NOT_FUNOD.getMessage());
         }
         return messageBuilder.toString();
     }
