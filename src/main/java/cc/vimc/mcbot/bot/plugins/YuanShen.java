@@ -11,6 +11,11 @@ import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.RegxUtils;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.digest.MD5;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
@@ -48,7 +53,7 @@ public class YuanShen implements EverywhereCommand {
         switch (preCommandList.get(0)) {
             case BIND:
                 if (BeanUtil.verifyNoBindQQ(sender.getId())) {
-                    BeanUtil.coolQUserMapper.insertYuanshenUser(sender.getId(),preCommandList.get(1));
+                    BeanUtil.coolQUserMapper.insertYuanshenUser(sender.getId(), preCommandList.get(1));
                     return "绑定成功";
                 } else {
                     BeanUtil.coolQUserMapper.updateYuanShenUID(preCommandList.get(1), sender.getId());
@@ -103,9 +108,41 @@ public class YuanShen implements EverywhereCommand {
     }
 
 
+    private String getYuanShenInfo(String UID) {
+        HttpRequest request = HttpUtil.createGet("https://api-takumi.mihoyo.com/game_record/genshin/api/index?server=cn_gf01&role_id=" + UID);
+
+        request.header("Accept", "application/json, text/plain, */*");
+        request.header("DS", DSGet());
+        request.header("Origin", "https://webstatic.mihoyo.com");
+        request.header("x-rpc-app_version", "2.1.0");
+        request.header("User-Agent", "Mozilla/5.0 (Linux; Android 9; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/39.0.0.0 Mobile Safari/537.36 miHoYoBBS/2.2.0");
+        request.header("x-rpc-client_type", "4");
+        request.header("Referer", "https://webstatic.mihoyo.com/app/community-game-records/index.html?v=6");
+        request.header("Accept-Encoding", "gzip, deflate");
+        request.header("Accept-Language", "zh-CN,en-US;q=0.8");
+        request.header("X-Requested-With", "com.mihoyo.hyperion");
+        HttpResponse execute = request.executeAsync();
+        return execute.body();
+
+    }
+
+    private String DSGet() {
+        String mhyVersion = "2.1.0";
+        String randomStr = "abcdefghijklmnopqrstuvwxyz0123456789";
+        String n = MD5.create().digestHex(mhyVersion);
+        String i = NumberUtil.roundStr(System.currentTimeMillis() / 1000.0, 0);
+        String r = "";
+        for (int i1 = 0; i1 < 6; i1++) {
+            r += Character.toString(RandomUtil.randomChar(randomStr));
+        }
+        String c = MD5.create().digestHex("salt=" + n + "&t=" + i + "&r=" + r);
+        return i + "," + r + "," + c;
+    }
+
+
     private String getStatus(String UID) {
-        String stringJSON = HttpUtil.get("https://service-joam13r8-1252025612.gz.apigw.tencentcs.com/uid/" + UID);
-        RetModel<YuanShenUserInfo> yuanShenUserInfoRetModel = JSONObject.parseObject(stringJSON, new TypeReference<RetModel<YuanShenUserInfo>>() {
+//        String stringJSON = HttpUtil.get("https://service-joam13r8-1252025612.gz.apigw.tencentcs.com/uid/" + UID);
+        RetModel<YuanShenUserInfo> yuanShenUserInfoRetModel = JSONObject.parseObject(getYuanShenInfo(UID), new TypeReference<RetModel<YuanShenUserInfo>>() {
         });
         if (!"OK".equals(yuanShenUserInfoRetModel.getMessage())) {
             return "奇怪...查不到该玩家信息。是不是没有启用米游社权限?或绑定了错误的UID?";
