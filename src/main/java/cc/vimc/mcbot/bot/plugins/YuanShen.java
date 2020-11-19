@@ -14,18 +14,19 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.MD5;
+import cn.hutool.http.HttpBase;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import org.junit.Test;
 import org.springframework.util.StringUtils;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class YuanShen implements EverywhereCommand {
     /**
@@ -40,6 +41,21 @@ public class YuanShen implements EverywhereCommand {
      * 角色状态
      */
     private static final String STATUS = "status";
+
+    private static final String APP_VERSION = "2.1.0";
+
+    private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 9; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/39.0.0.0 Mobile Safari/537.36 miHoYoBBS/" + APP_VERSION;
+
+    private static final String INDEX_URL = "https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html";
+
+    private static final String ACCEPT_ENCODING = "gzip, deflate, br";
+    /**
+     * 签到
+     */
+    private static final String ACTID = "e202009291139501";
+
+    private static final String REFERER = INDEX_URL + "?bbs_auth_required=true&act_id=" + ACTID + "&utm_source=bbs&utm_medium=mys&utm_campaign=icon";
+
 
 
     @Override
@@ -88,7 +104,7 @@ public class YuanShen implements EverywhereCommand {
         if (CollectionUtil.isEmpty(spList)) {
             return null;
         }
-        Integer nowSp = Integer.valueOf(spList.get(0));
+        Integer nowSp = Integer.parseInt(spList.get(0));
         Integer afterSp = Integer.valueOf(spList.get(1));
         int preSp = afterSp - nowSp;
         if (preSp <= 0) {
@@ -107,29 +123,15 @@ public class YuanShen implements EverywhereCommand {
         return messageBuilder.toString();
     }
 
-
-    private String getYuanShenInfo(String UID) {
-        HttpRequest request = HttpUtil.createGet("https://api-takumi.mihoyo.com/game_record/genshin/api/index?server=cn_gf01&role_id=" + UID);
-
-        request.header("Accept", "application/json, text/plain, */*");
-        request.header("DS", DSGet());
-        request.header("Origin", "https://webstatic.mihoyo.com");
-        request.header("x-rpc-app_version", "2.1.0");
-        request.header("User-Agent", "Mozilla/5.0 (Linux; Android 9; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/39.0.0.0 Mobile Safari/537.36 miHoYoBBS/2.2.0");
-        request.header("x-rpc-client_type", "4");
-        request.header("Referer", "https://webstatic.mihoyo.com/app/community-game-records/index.html?v=6");
-        request.header("Accept-Encoding", "gzip, deflate");
-        request.header("Accept-Language", "zh-CN,en-US;q=0.8");
-        request.header("X-Requested-With", "com.mihoyo.hyperion");
-        HttpResponse execute = request.executeAsync();
-        return execute.body();
-
-    }
-
+    /**
+     * @return java.lang.String
+     * @Description DS算法
+     * @author Ghost
+     * @date 2020/11/19
+     */
     private String DSGet() {
-        String mhyVersion = "2.1.0";
         String randomStr = "abcdefghijklmnopqrstuvwxyz0123456789";
-        String n = MD5.create().digestHex(mhyVersion);
+        String n = MD5.create().digestHex(APP_VERSION);
         String i = NumberUtil.roundStr(System.currentTimeMillis() / 1000.0, 0);
         String r = "";
         for (int i1 = 0; i1 < 6; i1++) {
@@ -139,7 +141,91 @@ public class YuanShen implements EverywhereCommand {
         return i + "," + r + "," + c;
     }
 
+    /**
+     * @param UID
+     * @return java.lang.String
+     * @Description 获取原神个人信息接口
+     * @author Ghost
+     * @date 2020/11/19
+     */
+    private String getYuanShenInfo(String UID) {
+        HttpRequest request = HttpUtil.createGet("https://api-takumi.mihoyo.com/game_record/genshin/api/index?server=cn_gf01&role_id=" + UID);
+        request.header("Accept", "application/json, text/plain, */*");
+        request.header("DS", DSGet());
+        request.header("Origin", "https://webstatic.mihoyo.com");
+        request.header("x-rpc-app_version", APP_VERSION);
+        request.header("User-Agent", USER_AGENT);
+        request.header("x-rpc-client_type", "4");
+        request.header("Referer", "https://webstatic.mihoyo.com/app/community-game-records/index.html?v=6");
+        request.header("Accept-Encoding", ACCEPT_ENCODING);
+        request.header("Accept-Language", "zh-CN,en-US;q=0.8");
+        request.header("X-Requested-With", "com.mihoyo.hyperion");
+        HttpResponse execute = request.executeAsync();
+        return execute.body();
+    }
 
+
+    private String[] proxyIpAndPort() {
+        String proxyDataStr = HttpUtil.get("http://vimc.cc:5010/get/");
+        ProxyData proxyData = JSONObject.parseObject(proxyDataStr, ProxyData.class);
+        String proxy = proxyData.getProxy();
+        return proxy.split(":");
+
+
+    }
+
+    private UserGameRoles getUserGameRolesByCookie(String cookie) {
+        HttpRequest get = HttpUtil.createGet("https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn");
+        get.header("User-Agent", USER_AGENT);
+        get.header("Referer", USER_AGENT);
+        get.header("Accept-Encoding", ACCEPT_ENCODING);
+        get.header("Referer", REFERER);
+        get.header("Cookie",cookie );
+        get.header("DS",DSGet());
+        HttpResponse httpResponse = get.executeAsync();
+        String result = httpResponse.body();
+        return JSONObject.parseObject(result,UserGameRoles.class);
+//        return result;
+    }
+
+    public void sendYuanShenSign() {
+        String cookie = "UM_distinctid=175d49f4b418a4-06c0786c981911-230346d-1fa400-175d49f4b426e4; _ga=GA1.2.2132794372.1605773208; _gid=GA1.2.1856248032.1605773208; CNZZDATA1275023096=1286305878-1605768548-https%253A%252F%252Fgithub.com%252F%7C1605768548; login_uid=5274188; login_ticket=RENJ30KpVeb7KOKVmd0HItaSP9hMqVw0oGBVWq0L; account_id=5274188; cookie_token=nUOUI3qOCbjYKVsWxy90cpX8aNpAz640EI6QXBXx; ltoken=c9kKYQzKCWRc93QwsvfHujMq8P1SpHGkAoLoK35d; ltuid=5274188; _gat=1";
+        UserGameRoles userGameRolesByCookie = getUserGameRolesByCookie(cookie);
+        if (userGameRolesByCookie.getRetcode()!=0){
+            return;
+        }
+        ListItem listItem = userGameRolesByCookie.getData().getList().stream().findFirst().get();
+        HttpRequest post = HttpUtil.createPost("https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign");
+
+        post.header("x-rpc-device_id","");
+        post.header("x-rpc-client_type","");
+        post.header("Accept-Encoding",ACCEPT_ENCODING);
+        post.header("User-Agent",USER_AGENT);
+        post.header("Referer",REFERER);
+        post.header("x-rpc-app_version",APP_VERSION);
+        post.header("DS",DSGet());
+        post.header("Cookie",cookie);
+
+        Map<String,Object> args = new HashMap<>();
+        args.put("act_id",ACTID);
+        args.put("region",listItem.getRegion());
+        args.put("uid",listItem.getGameUid());
+
+
+
+        String[] ipAndPort = proxyIpAndPort();
+//        HttpRequest httpRequest = post.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ipAndPort[0], Integer.parseInt(ipAndPort[1]))));
+
+        return;
+    }
+
+    /**
+     * @param UID 原神uid
+     * @return java.lang.String
+     * @Description 组装数据
+     * @author wlwang3
+     * @date 2020/11/19
+     */
     private String getStatus(String UID) {
 //        String stringJSON = HttpUtil.get("https://service-joam13r8-1252025612.gz.apigw.tencentcs.com/uid/" + UID);
         RetModel<YuanShenUserInfo> yuanShenUserInfoRetModel = JSONObject.parseObject(getYuanShenInfo(UID), new TypeReference<RetModel<YuanShenUserInfo>>() {
