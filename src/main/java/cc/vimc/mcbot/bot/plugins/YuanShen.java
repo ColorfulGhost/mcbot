@@ -10,15 +10,19 @@ import cc.vimc.mcbot.pojo.*;
 import cc.vimc.mcbot.utils.BeanUtil;
 import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.RegxUtils;
+import cc.vimc.mcbot.utils.UUIDUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import org.junit.Test;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -155,7 +159,7 @@ public class YuanShen implements EverywhereCommand {
         request.header("Accept-Encoding", ACCEPT_ENCODING);
         request.header("Accept-Language", "zh-CN,en-US;q=0.8");
         request.header("X-Requested-With", "com.mihoyo.hyperion");
-        HttpResponse execute = request.executeAsync();
+        HttpResponse execute = request.execute();
         return execute.body();
     }
 
@@ -181,20 +185,19 @@ public class YuanShen implements EverywhereCommand {
         String result = httpResponse.body();
         return JSONObject.parseObject(result, new TypeReference<RetModel<UserGameRoles>>() {
         });
-//        return result;
     }
 
-    public void sendYuanShenSign() {
-        String cookie = "UM_distinctid=175d49f4b418a4-06c0786c981911-230346d-1fa400-175d49f4b426e4; _ga=GA1.2.2132794372.1605773208; _gid=GA1.2.1856248032.1605773208; CNZZDATA1275023096=1286305878-1605768548-https%253A%252F%252Fgithub.com%252F%7C1605768548; login_uid=5274188; login_ticket=RENJ30KpVeb7KOKVmd0HItaSP9hMqVw0oGBVWq0L; account_id=5274188; cookie_token=nUOUI3qOCbjYKVsWxy90cpX8aNpAz640EI6QXBXx; ltoken=c9kKYQzKCWRc93QwsvfHujMq8P1SpHGkAoLoK35d; ltuid=5274188; _gat=1";
+    private void sendYuanShenSign() {
+        String cookie = "";
         RetModel<UserGameRoles> userGameRolesByCookie = getUserGameRolesByCookie(cookie);
         if (userGameRolesByCookie.getRetCode() != 0) {
             return;
         }
         ListItem listItem = userGameRolesByCookie.getData().getList().stream().findFirst().get();
-        HttpRequest post = HttpUtil.createPost("https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign");
+        HttpRequest post = HttpRequest.post("https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign");
 
-        post.header("x-rpc-device_id", "");
-        post.header("x-rpc-client_type", "");
+        post.header("x-rpc-device_id", UUIDUtil.uuid3(UUIDUtil.NAMESPACE_URL, cookie).toString().replace("-", "").toUpperCase());
+        post.header("x-rpc-client_type", "5");
         post.header("Accept-Encoding", ACCEPT_ENCODING);
         post.header("User-Agent", USER_AGENT);
         post.header("Referer", REFERER);
@@ -206,13 +209,13 @@ public class YuanShen implements EverywhereCommand {
         args.put("act_id", ACTID);
         args.put("region", listItem.getRegion());
         args.put("uid", listItem.getGameUid());
+        post.body(JSON.toJSONString(args));
 
+        HttpResponse execute = post.execute();
+        String body = execute.body();
 
-        String[] ipAndPort = proxyIpAndPort();
-//        HttpRequest httpRequest = post.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ipAndPort[0], Integer.parseInt(ipAndPort[1]))));
-
-        return;
     }
+
 
     /**
      * @param UID 原神uid
