@@ -14,17 +14,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.MD5;
-import cn.hutool.http.HttpBase;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import org.junit.Test;
 import org.springframework.util.StringUtils;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -55,7 +51,6 @@ public class YuanShen implements EverywhereCommand {
     private static final String ACTID = "e202009291139501";
 
     private static final String REFERER = INDEX_URL + "?bbs_auth_required=true&act_id=" + ACTID + "&utm_source=bbs&utm_medium=mys&utm_campaign=icon";
-
 
 
     @Override
@@ -174,43 +169,43 @@ public class YuanShen implements EverywhereCommand {
 
     }
 
-    private UserGameRoles getUserGameRolesByCookie(String cookie) {
+    private RetModel<UserGameRoles> getUserGameRolesByCookie(String cookie) {
         HttpRequest get = HttpUtil.createGet("https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn");
         get.header("User-Agent", USER_AGENT);
         get.header("Referer", USER_AGENT);
         get.header("Accept-Encoding", ACCEPT_ENCODING);
         get.header("Referer", REFERER);
-        get.header("Cookie",cookie );
-        get.header("DS",DSGet());
+        get.header("Cookie", cookie);
+        get.header("DS", DSGet());
         HttpResponse httpResponse = get.executeAsync();
         String result = httpResponse.body();
-        return JSONObject.parseObject(result,UserGameRoles.class);
+        return JSONObject.parseObject(result, new TypeReference<RetModel<UserGameRoles>>() {
+        });
 //        return result;
     }
 
     public void sendYuanShenSign() {
         String cookie = "UM_distinctid=175d49f4b418a4-06c0786c981911-230346d-1fa400-175d49f4b426e4; _ga=GA1.2.2132794372.1605773208; _gid=GA1.2.1856248032.1605773208; CNZZDATA1275023096=1286305878-1605768548-https%253A%252F%252Fgithub.com%252F%7C1605768548; login_uid=5274188; login_ticket=RENJ30KpVeb7KOKVmd0HItaSP9hMqVw0oGBVWq0L; account_id=5274188; cookie_token=nUOUI3qOCbjYKVsWxy90cpX8aNpAz640EI6QXBXx; ltoken=c9kKYQzKCWRc93QwsvfHujMq8P1SpHGkAoLoK35d; ltuid=5274188; _gat=1";
-        UserGameRoles userGameRolesByCookie = getUserGameRolesByCookie(cookie);
-        if (userGameRolesByCookie.getRetcode()!=0){
+        RetModel<UserGameRoles> userGameRolesByCookie = getUserGameRolesByCookie(cookie);
+        if (userGameRolesByCookie.getRetCode() != 0) {
             return;
         }
         ListItem listItem = userGameRolesByCookie.getData().getList().stream().findFirst().get();
         HttpRequest post = HttpUtil.createPost("https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign");
 
-        post.header("x-rpc-device_id","");
-        post.header("x-rpc-client_type","");
-        post.header("Accept-Encoding",ACCEPT_ENCODING);
-        post.header("User-Agent",USER_AGENT);
-        post.header("Referer",REFERER);
-        post.header("x-rpc-app_version",APP_VERSION);
-        post.header("DS",DSGet());
-        post.header("Cookie",cookie);
+        post.header("x-rpc-device_id", "");
+        post.header("x-rpc-client_type", "");
+        post.header("Accept-Encoding", ACCEPT_ENCODING);
+        post.header("User-Agent", USER_AGENT);
+        post.header("Referer", REFERER);
+        post.header("x-rpc-app_version", APP_VERSION);
+        post.header("DS", DSGet());
+        post.header("Cookie", cookie);
 
-        Map<String,Object> args = new HashMap<>();
-        args.put("act_id",ACTID);
-        args.put("region",listItem.getRegion());
-        args.put("uid",listItem.getGameUid());
-
+        Map<String, Object> args = new HashMap<>();
+        args.put("act_id", ACTID);
+        args.put("region", listItem.getRegion());
+        args.put("uid", listItem.getGameUid());
 
 
         String[] ipAndPort = proxyIpAndPort();
