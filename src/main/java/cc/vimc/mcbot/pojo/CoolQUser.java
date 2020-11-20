@@ -13,4 +13,5 @@ public class CoolQUser {
     private Date createTime;
     private String uuid;
     private String yuanshenUid;
+    private String yuanshenCookie;
 }

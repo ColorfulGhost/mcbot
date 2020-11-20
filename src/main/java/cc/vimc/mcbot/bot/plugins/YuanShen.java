@@ -3,8 +3,10 @@ package cc.vimc.mcbot.bot.plugins;
 import cc.moecraft.icq.command.CommandProperties;
 import cc.moecraft.icq.command.interfaces.EverywhereCommand;
 import cc.moecraft.icq.event.events.message.EventMessage;
+import cc.moecraft.icq.sender.IcqHttpApi;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
+import cc.vimc.mcbot.bot.Bot;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.pojo.*;
 import cc.vimc.mcbot.utils.BeanUtil;
@@ -12,7 +14,6 @@ import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.RegxUtils;
 import cc.vimc.mcbot.utils.UUIDUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.MD5;
@@ -22,13 +23,14 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import org.junit.Test;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class YuanShen implements EverywhereCommand {
+
     /**
      * 绑定账号
      */
@@ -37,6 +39,8 @@ public class YuanShen implements EverywhereCommand {
      * 体力设置
      */
     private static final String SP = "sp";
+    private static final String COOKIE = "cookie";
+    private static final String SIGN = "sign";
     /**
      * 角色状态
      */
@@ -56,38 +60,64 @@ public class YuanShen implements EverywhereCommand {
 
     private static final String REFERER = INDEX_URL + "?bbs_auth_required=true&act_id=" + ACTID + "&utm_source=bbs&utm_medium=mys&utm_campaign=icon";
 
+    private final static IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
+
 
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
         String preCommand = BotUtils.removeCommandPrefix(Commands.YUANSHEN.getCommand(), event.getMessage());
         List<String> preCommandList = Arrays.asList(preCommand.split(" "));
         MessageBuilder messageBuilder = new MessageBuilder();
-        if (CollectionUtil.isEmpty(preCommandList)) {
-            return null;
-        }
+//        if (CollectionUtil.isEmpty(preCommandList) || StringUtils.isEmpty(preCommandList.get(0))) {
+//            return "/ys bind 108288915 \n" +
+//                    "/ys cookie ***** 【设置米游社Cookie后自动签到】\n" +
+//                    "/ys sign 【手动签到】\n" +
+//                    "/ys status 【查询自己的信息】\n" +
+//                    "/ys status 108288915【查询他人的信息】\n" +
+//                    "/ys status @yjx4【群内绑定过的好友信息】\n" +
+////                    "/ys abyss 12-3【查询好友】\n" +
+//                    "/ys sp 32-80 【(当前体力)-(目标体力)】 \n";
+//        }
+        CoolQUser coolQUser = BeanUtil.coolQUserMapper.selectForQQ(sender.getId());
         switch (preCommandList.get(0)) {
             case BIND:
-                if (BeanUtil.verifyNoBindQQ(sender.getId())) {
-                    BeanUtil.coolQUserMapper.insertYuanshenUser(sender.getId(), preCommandList.get(1));
+                if (coolQUser == null) {
+                    BeanUtil.coolQUserMapper.insertYuanshenUserUID(sender.getId(), preCommandList.get(1));
                     return "绑定成功";
                 } else {
                     BeanUtil.coolQUserMapper.updateYuanShenUID(preCommandList.get(1), sender.getId());
                     return "更新成功";
                 }
+            case COOKIE:
+                String cookie = "";
+                for (int i = 1; i < preCommandList.size(); i++) {
+                    cookie += preCommandList.get(i);
+                }
+                if (coolQUser == null) {
+                    BeanUtil.coolQUserMapper.insertYuanshenUserCookie(sender.getId(), cookie);
+                    return "绑定成功";
+                } else {
+                    BeanUtil.coolQUserMapper.updateYuanShenCookie(cookie, sender.getId());
+                    return "更新成功";
+                }
+            case SIGN:
+                if (coolQUser == null || StringUtils.isEmpty(coolQUser.getYuanshenCookie())) {
+                    return "您没有绑定无法操作";
+                }
+                return sendYuanShenSign(coolQUser.getYuanshenCookie());
+
             case SP:
                 return SP(preCommandList, messageBuilder);
             case STATUS:
                 if (preCommandList.size() < 2) {
-                    CoolQUser coolQUser = BeanUtil.coolQUserMapper.selectForQQ(sender.getId());
 
                     if (coolQUser == null || StringUtils.isEmpty(coolQUser.getYuanshenUid())) {
-                        return "您没有绑定无法直接查询";
+                        return "您没有绑定无法操作";
                     }
                     return getStatus(coolQUser.getYuanshenUid());
                 } else {
                     String qq = new RegxUtils(preCommandList.get(1)).getQQ();
                     if (!StringUtils.isEmpty(qq)) {
-                        CoolQUser coolQUser = BeanUtil.coolQUserMapper.selectForQQ(Long.valueOf(qq));
                         return getStatus(coolQUser.getYuanshenUid());
                     }
                     return getStatus(preCommandList.get(1));
@@ -97,6 +127,24 @@ public class YuanShen implements EverywhereCommand {
         }
         return null;
     }
+
+
+    @Scheduled(cron = "00 12 6 * * ?")
+    public void autoYuanShenSign() {
+        List<CoolQUser> coolQUser = BeanUtil.coolQUserMapper.selectYuanShenCookieNotNull();
+        if (CollectionUtil.isEmpty(coolQUser)) {
+            return;
+        }
+        for (CoolQUser qUser : coolQUser) {
+            String yuanshenCookie = qUser.getYuanshenCookie();
+
+            String result = sendYuanShenSign(yuanshenCookie);
+
+            icqHttpApi.sendPrivateMsg(qUser.getQq(), result);
+
+        }
+    }
+
 
     private String SP(List<String> preCommandList, MessageBuilder messageBuilder) {
         List<String> spList = Arrays.asList(preCommandList.get(1).split("-"));
@@ -110,7 +158,7 @@ public class YuanShen implements EverywhereCommand {
             return null;
         }
         //1分钟8体力*预计恢复体力 = 总恢复时间
-        int preSpRestoreMin = preSp * 8;
+        Long preSpRestoreMin = preSp * 8L;
 
         if (preSpRestoreMin > Integer.MAX_VALUE) {
             return messageBuilder.add("你在测试我的MAX_VALUE?").toString();
@@ -187,11 +235,10 @@ public class YuanShen implements EverywhereCommand {
         });
     }
 
-    private void sendYuanShenSign() {
-        String cookie = "";
+    private String sendYuanShenSign(String cookie) {
         RetModel<UserGameRoles> userGameRolesByCookie = getUserGameRolesByCookie(cookie);
         if (userGameRolesByCookie.getRetCode() != 0) {
-            return;
+            return JSON.toJSONString(userGameRolesByCookie);
         }
         ListItem listItem = userGameRolesByCookie.getData().getList().stream().findFirst().get();
         HttpRequest post = HttpRequest.post("https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign");
@@ -212,8 +259,7 @@ public class YuanShen implements EverywhereCommand {
         post.body(JSON.toJSONString(args));
 
         HttpResponse execute = post.execute();
-        String body = execute.body();
-
+        return execute.body();
     }
 
 

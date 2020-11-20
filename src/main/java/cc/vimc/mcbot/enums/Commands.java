@@ -5,10 +5,17 @@ public enum Commands {
      * 命令全部用小写
      */
     YUANSHEN("ys", "原神相关命令\n" +
-            "  - 绑定如：/ys bind 108288915 \n" +
-            "  - 原神角色游戏数据：/ys status 108288915 【绑定后可直接/ys status 查询】\n" +
-            "  - 体力设置：/ys sp 32-80 【(当前体力)-(目标体力)】 \n"
+            " - /ys bind 108288915 \n" +
+            " - /ys cookie ***** 【设置米游社Cookie后自动签到】\n" +
+            " - /ys sign 【手动签到】\n" +
+            " - /ys status 【查询自己的信息】\n" +
+            " - /ys status 108288915【查询他人的信息】\n" +
+            " - /ys status @yjx4【群内绑定过的好友信息】\n" +
+//                    "/ys abyss 12-3【查询好友】\n" +
+            " -/ys sp 32-80 【(当前体力)-(目标体力)】 \n"
+
     ),
+
     IOT("iot", "基于mqtt的物联网功能 （老王自家使用）"),
 
     BANGUMI("bangumi", "开启新番更新提醒(大陆未购买版权则不会提醒)，排除你不喜欢的新番如:/bangumi rm 240835"),
