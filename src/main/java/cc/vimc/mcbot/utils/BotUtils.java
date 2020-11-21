@@ -96,8 +96,16 @@ public class BotUtils {
         return pluginsClasses.toArray(new IcqCommand[pluginsClasses.size()]);
 
     }
-
+    /**
+     * @Description
+     * @author Ghost
+     * @param count 次数越高数值越大
+     * @param bound 范围
+     * @return int
+     * @date 2020/11/20
+     */
     public static int getRandomSum(int count, int bound) {
+
         //随机发送
         Random r = new Random();
         int randomSum = 0;

@@ -23,7 +23,6 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -41,6 +40,7 @@ public class YuanShen implements EverywhereCommand {
     private static final String SP = "sp";
     private static final String COOKIE = "cookie";
     private static final String SIGN = "sign";
+    private static final String USER = "user";
     /**
      * 角色状态
      */
@@ -88,6 +88,11 @@ public class YuanShen implements EverywhereCommand {
                     BeanUtil.coolQUserMapper.updateYuanShenUID(preCommandList.get(1), sender.getId());
                     return "更新成功";
                 }
+            case USER:
+                if (coolQUser == null || StringUtils.isEmpty(coolQUser.getYuanshenCookie())) {
+                    return "您没有绑定无法操作";
+                }
+                return JSON.toJSONString(getUserGameRolesByCookie(coolQUser.getYuanshenCookie()));
             case COOKIE:
                 String cookie = "";
                 for (int i = 1; i < preCommandList.size(); i++) {
@@ -126,23 +131,6 @@ public class YuanShen implements EverywhereCommand {
                 break;
         }
         return null;
-    }
-
-
-    @Scheduled(cron = "00 12 6 * * ?")
-    public void autoYuanShenSign() {
-        List<CoolQUser> coolQUser = BeanUtil.coolQUserMapper.selectYuanShenCookieNotNull();
-        if (CollectionUtil.isEmpty(coolQUser)) {
-            return;
-        }
-        for (CoolQUser qUser : coolQUser) {
-            String yuanshenCookie = qUser.getYuanshenCookie();
-
-            String result = sendYuanShenSign(yuanshenCookie);
-
-            icqHttpApi.sendPrivateMsg(qUser.getQq(), result);
-
-        }
     }
 
 
@@ -213,10 +201,14 @@ public class YuanShen implements EverywhereCommand {
 
 
     private String[] proxyIpAndPort() {
-        String proxyDataStr = HttpUtil.get("http://vimc.cc:5010/get/");
+        //增加匿名代理
+        String proxyDataStr = HttpUtil.get("http://localhost:5010/get/");
         ProxyData proxyData = JSONObject.parseObject(proxyDataStr, ProxyData.class);
         String proxy = proxyData.getProxy();
-        return proxy.split(":");
+
+        String[] split = proxy.split(":");
+
+        return split;
 
 
     }
@@ -229,20 +221,21 @@ public class YuanShen implements EverywhereCommand {
         get.header("Referer", REFERER);
         get.header("Cookie", cookie);
         get.header("DS", DSGet());
+
+//        get.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIpAndPort()[0], Integer.parseInt(proxyIpAndPort()[1]))));
         HttpResponse httpResponse = get.executeAsync();
         String result = httpResponse.body();
         return JSONObject.parseObject(result, new TypeReference<RetModel<UserGameRoles>>() {
         });
     }
 
-    private String sendYuanShenSign(String cookie) {
+    public String sendYuanShenSign(String cookie) {
         RetModel<UserGameRoles> userGameRolesByCookie = getUserGameRolesByCookie(cookie);
         if (userGameRolesByCookie.getRetCode() != 0) {
             return JSON.toJSONString(userGameRolesByCookie);
         }
         ListItem listItem = userGameRolesByCookie.getData().getList().stream().findFirst().get();
         HttpRequest post = HttpRequest.post("https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign");
-
         post.header("x-rpc-device_id", UUIDUtil.uuid3(UUIDUtil.NAMESPACE_URL, cookie).toString().replace("-", "").toUpperCase());
         post.header("x-rpc-client_type", "5");
         post.header("Accept-Encoding", ACCEPT_ENCODING);
@@ -251,6 +244,7 @@ public class YuanShen implements EverywhereCommand {
         post.header("x-rpc-app_version", APP_VERSION);
         post.header("DS", DSGet());
         post.header("Cookie", cookie);
+//        post.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIpAndPort()[0], Integer.parseInt(proxyIpAndPort()[1]))));
 
         Map<String, Object> args = new HashMap<>();
         args.put("act_id", ACTID);

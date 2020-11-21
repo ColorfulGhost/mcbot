@@ -9,11 +9,13 @@ import cc.vimc.mcbot.bot.Bot;
 import cc.vimc.mcbot.bot.plugins.Hitokoto;
 import cc.vimc.mcbot.bot.plugins.MiBand;
 import cc.vimc.mcbot.bot.plugins.SeTu;
+import cc.vimc.mcbot.bot.plugins.YuanShen;
 import cc.vimc.mcbot.mapper.CoolQStatusMapper;
 import cc.vimc.mcbot.mapper.NewHonorPlayerMapper;
 import cc.vimc.mcbot.mapper.UserMapper;
 import cc.vimc.mcbot.pojo.*;
 import cc.vimc.mcbot.rcon.RconCommand;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.map.MapUtil;
@@ -24,6 +26,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -70,6 +73,22 @@ public class ScheduledSendMessage {
         this.lastQuarterBangumi = HttpUtil.get(lastQuarterBangumiURL);
     }
 
+    @Scheduled(cron = "00 12 6 * * ?")
+    @Async
+    public void autoYuanShenSign() {
+        List<CoolQUser> coolQUser = BeanUtil.coolQUserMapper.selectYuanShenCookieNotNull();
+        if (CollectionUtil.isEmpty(coolQUser)) {
+            return;
+        }
+        YuanShen yuanShen = new YuanShen();
+        for (CoolQUser qUser : coolQUser) {
+            String yuanshenCookie = qUser.getYuanshenCookie();
+            String result = yuanShen.sendYuanShenSign(yuanshenCookie);
+            ThreadUtil.sleep(BotUtils.getRandomSum(2, 2000));
+            icqHttpApi.sendPrivateMsg(qUser.getQq(), result);
+
+        }
+    }
 
     @Scheduled(cron = "0 */1 * * * ?")
     public void SendMessageFor1ms() {
