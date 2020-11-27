@@ -3,7 +3,10 @@ package cc.vimc.mcbot.bot;
 import cc.moecraft.icq.event.EventHandler;
 import cc.moecraft.icq.event.IcqListener;
 import cc.moecraft.icq.event.events.message.EventGroupMessage;
+import cc.moecraft.icq.event.events.notice.groupmember.EventNoticeGroupMemberChange;
 import cc.moecraft.icq.event.events.notice.groupmember.increase.EventNoticeGroupMemberApprove;
+import cc.moecraft.icq.event.events.request.EventGroupInviteRequest;
+import cc.moecraft.icq.event.events.request.EventRequest;
 import cc.moecraft.icq.sender.IcqHttpApi;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.sender.message.components.ComponentImage;
@@ -40,11 +43,10 @@ public class MessageListener extends IcqListener {
     private Map<Long, Boolean> readyRepeaterStatus = new ConcurrentHashMap<>();
 
     @EventHandler
-    public void eventNoticeGroupMemberApprove(EventNoticeGroupMemberApprove event) {
-        //阳炎科技
-//        if (320510479 == event.getGroupId()) {
-//            event.getGroupMethods().respond("欢迎新成员~查看置顶群公告，看看如何申请白名单吧~");
-//        }
+    public void eventNoticeGroupMemberApprove(EventRequest event) {
+        event.accept();
+        ThreadUtil.sleep(1000);
+        event.getHttpApi().getBot().getAccountManager().refreshCache();
     }
 
     public static String bytesToHexString(byte[] src) {
@@ -66,14 +68,14 @@ public class MessageListener extends IcqListener {
     @EventHandler
     @Async
     public void eventGroupMessage(EventGroupMessage event) {
-            IcqHttpApi httpApi = event.getBotAccount().getHttpApi();
-            Long groupId = event.getGroupId();
-            String message = event.getMessage();
+        IcqHttpApi httpApi = event.getBotAccount().getHttpApi();
+        Long groupId = event.getGroupId();
+        String message = event.getMessage();
 //            if (message.contains("机器人")) {
 //                httpApi.sendGroupMsg(groupId, message);
 
 //            } else {
-                //复读状态里有没有这个组
+        //复读状态里有没有这个组
 //                if (repeater.containsKey(groupId) && repeater.get(groupId).equals(message)) {
 //                    //拿取上次保存的message和本次message对比 和之前有没有复读过
 //                    if (readyRepeaterStatus.getOrDefault(groupId, false)) {
@@ -88,86 +90,86 @@ public class MessageListener extends IcqListener {
 //                    readyRepeaterStatus.put(groupId, true);
 //
 //                }
-                for (String sexKeyword : BotUtils.LSB_KEYWORD) {
-                    if (message.contains(sexKeyword)) {
-                        SeTuResponseModel.Setu setu = new SeTu().seTuApi("", 2, 1,event).getData().get(0);
+        for (String sexKeyword : BotUtils.LSB_KEYWORD) {
+            if (message.contains(sexKeyword)) {
+                SeTuResponseModel.Setu setu = new SeTu().seTuApi("", 2, 1, event).getData().get(0);
+                httpApi.sendGroupMsg(groupId, new MessageBuilder().add(new ComponentImage(setu.getUrl())).toString());
+                return;
+            }
+        }
+//            }
+
+
+        RegxUtils cqCodeImageRegx = new RegxUtils(message);
+        String url = cqCodeImageRegx.getCQCodeImageURL();
+
+        if (StringUtils.isEmpty(url) && message.contains("CQ:image")) {
+            return;
+        }
+
+        File image = FileUtil.file(cqCodeImageRegx.getCQCodeImageFileName());
+        HttpUtil.downloadFile(url, image);
+        //图片>200kb不处理
+        long imageKB = FileUtil.size(image) / 1024;
+        if (imageKB > 200) {
+            return;
+        }
+
+        byte[] byteType = new byte[3];
+        BufferedInputStream fileInputStream = FileUtil.getInputStream(image);
+        try {
+            fileInputStream.read(byteType, 0, byteType.length);
+        } catch (IOException e) {
+            log.error(e);
+        }
+
+        String hex = bytesToHexString(byteType).toUpperCase();
+        String suffix = FileType.getSuffix(hex);
+        try {
+            fileInputStream.close();
+        } catch (IOException e) {
+            log.error(e);
+        }
+        //ocr内容
+        List<String> contents;
+        if (suffix.equals(FileType.JPG.getSuffix()) || suffix.equals(FileType.PNG.getSuffix())) {
+
+            //拿取文件md5
+            String imageMD5 = SecureUtil.md5(image);
+            //从redis获取缓存
+            String imageContentList = BeanUtil.redisUtil.get(RedisUtil.BOT_IMAGE_MD5 + imageMD5);
+            String imageContentJSON;
+            //拿不到则OCR
+            if (StringUtils.isEmpty(imageContentList)) {
+                HashMap<String, Object> args = new HashMap<>();
+                args.put("image", image);
+                imageContentJSON = HttpUtil.post("http://192.168.1.220:88/doOCR", args);
+                Map<String, List<String>> md5ForContent = JSONObject.parseObject(imageContentJSON, Map.class);
+
+                //删除文件
+                FileUtil.del(cqCodeImageRegx.getCQCodeImageFileName());
+                if (MapUtil.isEmpty(md5ForContent)) {
+                    return;
+                }
+                //拿到存入缓存
+                contents = md5ForContent.get(imageMD5);
+                if (CollectionUtil.isEmpty(contents)) {
+                    return;
+                }
+                BeanUtil.redisUtil.set(RedisUtil.BOT_IMAGE_MD5 + imageMD5, JSON.toJSONString(contents));
+            } else {
+                contents = JSON.parseArray(imageContentList, String.class);
+            }
+            //有交集则发涩图
+            for (String keyword : BotUtils.LSB_KEYWORD) {
+                for (String content : contents) {
+                    if (content.contains(keyword)) {
+                        SeTuResponseModel.Setu setu = new SeTu().seTuApi("", 2, 1, event).getData().get(0);
                         httpApi.sendGroupMsg(groupId, new MessageBuilder().add(new ComponentImage(setu.getUrl())).toString());
                         return;
                     }
                 }
-//            }
-
-
-            RegxUtils cqCodeImageRegx = new RegxUtils(message);
-            String url = cqCodeImageRegx.getCQCodeImageURL();
-
-            if (StringUtils.isEmpty(url)&&message.contains("CQ:image")) {
-                return;
             }
-
-            File image = FileUtil.file(cqCodeImageRegx.getCQCodeImageFileName());
-            HttpUtil.downloadFile(url, image);
-            //图片>200kb不处理
-            long imageKB = FileUtil.size(image) / 1024;
-            if (imageKB > 200) {
-                return;
-            }
-
-            byte[] byteType = new byte[3];
-            BufferedInputStream fileInputStream = FileUtil.getInputStream(image);
-            try {
-                fileInputStream.read(byteType, 0, byteType.length);
-            } catch (IOException e) {
-                log.error(e);
-            }
-
-            String hex = bytesToHexString(byteType).toUpperCase();
-            String suffix = FileType.getSuffix(hex);
-            try {
-                fileInputStream.close();
-            } catch (IOException e) {
-                log.error(e);
-            }
-            //ocr内容
-            List<String> contents;
-            if (suffix.equals(FileType.JPG.getSuffix()) || suffix.equals(FileType.PNG.getSuffix())) {
-
-                //拿取文件md5
-                String imageMD5 = SecureUtil.md5(image);
-                //从redis获取缓存
-                String imageContentList = BeanUtil.redisUtil.get(RedisUtil.BOT_IMAGE_MD5 + imageMD5);
-                String imageContentJSON;
-                //拿不到则OCR
-                if (StringUtils.isEmpty(imageContentList)) {
-                    HashMap<String, Object> args = new HashMap<>();
-                    args.put("image", image);
-                    imageContentJSON = HttpUtil.post("http://192.168.1.220:88/doOCR", args);
-                    Map<String, List<String>> md5ForContent = JSONObject.parseObject(imageContentJSON, Map.class);
-
-                    //删除文件
-                    FileUtil.del(cqCodeImageRegx.getCQCodeImageFileName());
-                    if (MapUtil.isEmpty(md5ForContent)) {
-                        return;
-                    }
-                    //拿到存入缓存
-                    contents = md5ForContent.get(imageMD5);
-                    if (CollectionUtil.isEmpty(contents)) {
-                        return;
-                    }
-                    BeanUtil.redisUtil.set(RedisUtil.BOT_IMAGE_MD5 + imageMD5, JSON.toJSONString(contents));
-                } else {
-                    contents = JSON.parseArray(imageContentList, String.class);
-                }
-                //有交集则发涩图
-                for (String keyword : BotUtils.LSB_KEYWORD) {
-                    for (String content : contents) {
-                        if (content.contains(keyword)) {
-                            SeTuResponseModel.Setu setu = new SeTu().seTuApi("", 2, 1,event).getData().get(0);
-                            httpApi.sendGroupMsg(groupId, new MessageBuilder().add(new ComponentImage(setu.getUrl())).toString());
-                            return;
-                        }
-                    }
-                }
-            }
+        }
     }
 }

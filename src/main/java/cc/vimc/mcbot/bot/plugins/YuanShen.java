@@ -5,7 +5,9 @@ import cc.moecraft.icq.command.interfaces.EverywhereCommand;
 import cc.moecraft.icq.event.events.message.EventMessage;
 import cc.moecraft.icq.sender.IcqHttpApi;
 import cc.moecraft.icq.sender.message.MessageBuilder;
+import cc.moecraft.icq.sender.message.components.ComponentImage;
 import cc.moecraft.icq.user.User;
+import cc.moecraft.icq.utils.CQUtils;
 import cc.vimc.mcbot.bot.Bot;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.pojo.*;
@@ -60,15 +62,18 @@ public class YuanShen implements EverywhereCommand {
 
     private static final String REFERER = INDEX_URL + "?bbs_auth_required=true&act_id=" + ACTID + "&utm_source=bbs&utm_medium=mys&utm_campaign=icon";
 
-    private final static IcqHttpApi icqHttpApi = Bot.bot.getAccountManager().getNonAccountSpecifiedApi();
-
-
     @Override
     public String run(EventMessage event, User sender, String command, ArrayList<String> args) {
         String preCommand = BotUtils.removeCommandPrefix(Commands.YUANSHEN.getCommand(), event.getMessage());
         List<String> preCommandList = Arrays.asList(preCommand.split(" "));
         MessageBuilder messageBuilder = new MessageBuilder();
-//        if (CollectionUtil.isEmpty(preCommandList) || StringUtils.isEmpty(preCommandList.get(0))) {
+        if (CollectionUtil.isEmpty(preCommandList) || StringUtils.isEmpty(preCommandList.get(0))) {
+            messageBuilder.add("浏览器打开 https://bbs.mihoyo.com/ys/ 并登录账号\n");
+            messageBuilder.add("按F12，打开开发者工具，找到Network并点击\n");
+            messageBuilder.add("按F5刷新页面，按下图复制Cookie\n");
+            messageBuilder.add(new ComponentImage("https://camo.githubusercontent.com/afa3e836231e28af1311fcc9434610a5605a31c1595f0fede1a4157af8550677/68747470733a2f2f692e6c6f6c692e6e65742f323032302f31302f32382f544d4b43366c736e6b3477354138692e706e67"));
+            messageBuilder.add("\n复制后输入/ys cookie ****** 【你复制的Cookie】");
+            return messageBuilder.toString();
 //            return "/ys bind 108288915 \n" +
 //                    "/ys cookie ***** 【设置米游社Cookie后自动签到】\n" +
 //                    "/ys sign 【手动签到】\n" +
@@ -77,7 +82,7 @@ public class YuanShen implements EverywhereCommand {
 //                    "/ys status @yjx4【群内绑定过的好友信息】\n" +
 ////                    "/ys abyss 12-3【查询好友】\n" +
 //                    "/ys sp 32-80 【(当前体力)-(目标体力)】 \n";
-//        }
+        }
         CoolQUser coolQUser = BeanUtil.coolQUserMapper.selectForQQ(sender.getId());
         switch (preCommandList.get(0)) {
             case BIND:
