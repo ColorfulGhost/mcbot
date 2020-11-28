@@ -1,11 +1,10 @@
 package cc.vimc.mcbot.mapper;
 
 
-import cc.vimc.mcbot.pojo.CoolQKeyWord;
+import cc.vimc.mcbot.entity.CoolQKeyWord;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 

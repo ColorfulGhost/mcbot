@@ -1,4 +1,4 @@
-package cc.vimc.mcbot.pojo;
+package cc.vimc.mcbot.entity;
 
 import lombok.Data;
 

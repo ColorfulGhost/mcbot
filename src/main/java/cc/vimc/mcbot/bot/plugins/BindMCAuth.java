@@ -6,7 +6,7 @@ import cc.moecraft.icq.event.events.message.EventPrivateMessage;
 import cc.moecraft.icq.sender.message.MessageBuilder;
 import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
-import cc.vimc.mcbot.pojo.FlexBleLoginUser;
+import cc.vimc.mcbot.mapper.FlexBleLoginUser;
 import cc.vimc.mcbot.utils.BcryptHasher;
 import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.BeanUtil;

@@ -1,6 +1,6 @@
 package cc.vimc.mcbot.mapper;
 
-import cc.vimc.mcbot.pojo.Soul;
+import cc.vimc.mcbot.entity.Soul;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;

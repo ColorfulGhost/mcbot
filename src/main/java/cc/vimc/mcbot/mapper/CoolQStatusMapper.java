@@ -1,6 +1,6 @@
 package cc.vimc.mcbot.mapper;
 
-import cc.vimc.mcbot.pojo.CoolQStatus;
+import cc.vimc.mcbot.entity.CoolQStatus;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.stereotype.Repository;

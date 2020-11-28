@@ -1,7 +1,7 @@
 package cc.vimc.mcbot.controller;
 
 import cc.vimc.mcbot.mapper.CoolQUserMapper;
-import cc.vimc.mcbot.pojo.CoolQUser;
+import cc.vimc.mcbot.entity.CoolQUser;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileReader;

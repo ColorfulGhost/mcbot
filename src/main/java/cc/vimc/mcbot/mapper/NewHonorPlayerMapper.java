@@ -1,6 +1,6 @@
 package cc.vimc.mcbot.mapper;
 
-import cc.vimc.mcbot.pojo.NewHonorPlayer;
+import cc.vimc.mcbot.entity.NewHonorPlayer;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;

@@ -8,7 +8,7 @@ import cc.moecraft.icq.sender.message.components.ComponentAt;
 import cc.moecraft.icq.user.Group;
 import cc.moecraft.icq.user.GroupUser;
 import cc.vimc.mcbot.enums.Commands;
-import cc.vimc.mcbot.pojo.CoolQStatus;
+import cc.vimc.mcbot.entity.CoolQStatus;
 import cc.vimc.mcbot.utils.BotUtils;
 import cn.hutool.core.text.StrSpliter;
 import org.springframework.util.StringUtils;

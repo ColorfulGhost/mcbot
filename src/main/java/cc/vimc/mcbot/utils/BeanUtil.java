@@ -6,8 +6,8 @@ import cc.vimc.mcbot.mapper.CoolQSoulMapper;
 import cc.vimc.mcbot.mapper.CoolQStatusMapper;
 import cc.vimc.mcbot.mapper.CoolQUserMapper;
 import cc.vimc.mcbot.mapper.UserMapper;
-import cc.vimc.mcbot.pojo.CoolQUser;
-import cc.vimc.mcbot.pojo.FlexBleLoginUser;
+import cc.vimc.mcbot.entity.CoolQUser;
+import cc.vimc.mcbot.mapper.FlexBleLoginUser;
 
 import java.util.Arrays;
 import java.util.List;
