@@ -1,4 +1,4 @@
-package cc.vimc.mcbot.mapper;
+package cc.vimc.mcbot.entity;
 
 
 import lombok.Data;

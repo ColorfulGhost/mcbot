@@ -8,7 +8,7 @@ import cc.moecraft.icq.user.User;
 import cc.vimc.mcbot.enums.Commands;
 import cc.vimc.mcbot.enums.ConstantMessages;
 import cc.vimc.mcbot.entity.CoolQUser;
-import cc.vimc.mcbot.mapper.FlexBleLoginUser;
+import cc.vimc.mcbot.entity.FlexBleLoginUser;
 import cc.vimc.mcbot.utils.BcryptHasher;
 import cc.vimc.mcbot.utils.BotUtils;
 import cc.vimc.mcbot.utils.BeanUtil;

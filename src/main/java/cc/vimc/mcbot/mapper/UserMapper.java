@@ -1,5 +1,6 @@
 package cc.vimc.mcbot.mapper;
 
+import cc.vimc.mcbot.entity.FlexBleLoginUser;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 

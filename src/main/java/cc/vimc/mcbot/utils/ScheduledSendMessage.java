@@ -14,7 +14,7 @@ import cc.vimc.mcbot.entity.CoolQStatus;
 import cc.vimc.mcbot.entity.CoolQUser;
 import cc.vimc.mcbot.entity.NewHonorPlayer;
 import cc.vimc.mcbot.mapper.CoolQStatusMapper;
-import cc.vimc.mcbot.mapper.FlexBleLoginUser;
+import cc.vimc.mcbot.entity.FlexBleLoginUser;
 import cc.vimc.mcbot.mapper.NewHonorPlayerMapper;
 import cc.vimc.mcbot.mapper.UserMapper;
 import cc.vimc.mcbot.pojo.*;
